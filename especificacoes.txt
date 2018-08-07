@@ -1,0 +1,73 @@
+********************************************************
+*                                                      *
+*                    ###   ##### #                     *
+*                    #  #    #   #                     *
+*                    #   #   #   #                     *
+*                    #   #   #   #                     *
+*                    #  #    #   #                     *
+*                    ###     #   #####                 *
+*                                                      *
+********************************************************
+
+* SOBRE *
+
+* Estruturas de dados
+
+  As estruturas de dados (minimas) são de pelo menos 192 bits, da forma:
+
+
+        64 bits        64 bits                      N bits
+    ------------------------------             --------------- 
+    |    Tipo     ||  Ponteiro   | ----------> |    Dado     |
+    ------------------------------             --------------- 
+              CABEÇALHO                             DADO
+
+    Sendo esses bits 128 de cabeçalho e 64 de dado 
+
+  Os tipos são:
+
+  0 - Função
+  1 - Inteiro
+  2 - Float
+  3 - Char
+  4 - String
+  5 - Arvore
+  6 - Objeto
+
+* Tipos
+
+  0 - Função
+
+    O tipo função pode ser executado com o (). Seu ponteiro é para o corpo da função. () realiza um JMP para
+    o ponteiro. 
+    Os parâmetros são todos passados por stack sempre. A stack é usada SOMENTE para passar parâmetros de função.
+
+  1 - Inteiro
+
+    O tipo inteiro usa registradores inteiros e tem o seu dado com 64 bits.
+
+  2 - Float
+
+    O tipo float usa registradores float e tem seu dado com 64 bits.
+
+  3 - Char
+
+    O tipo char imita o inteiro e tem seu dado com 64 bits.
+
+  4 - String
+
+    O tipo string aponta para um array de char em sequência que termina obrigatoriamente com um '\0'. Operações
+    como + concatenam dois arrays de char em um novo e operações de - removem uma string de dentro de outra 
+    (Ex: "teste" - "t" = "este"; "teste" - "st" = "tee")
+
+  5 - Arvore
+
+    O tipo arvore tem um dado de 192*3 bits, o dado[0] é a cabeça, o dado[1] é o nó da esquerda e o dado[2] é
+    o da direita. 
+
+  6 - Objeto
+
+    O tipo objeto tem um dado do tipo 128*N bits, onde N é a quantidade de referências que esse objeto guarda.
+    O dado[0] é o ponteiro para a string que tem o nome do dado e o dado[1] é o ponteiro para o dado.
+
+    O tipo objeto é um mapa de cabeçalhos. 
