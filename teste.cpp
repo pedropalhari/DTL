@@ -11,10 +11,6 @@ class objeto {
   unordered_map<string, any> GLOBAL;
 };
 
-unordered_map<string, any> deCast(any &x) {
-  return (*any_cast<unordered_map<string, any> *>(x));
-}
-
 int main() {
   any GLOBAL = new unordered_map<string, any>();
 
@@ -25,7 +21,7 @@ int main() {
   string entry = "abc";
   cast(cast(GLOBAL)["b"])["c"] = entry;
 
-  cout << any_cast<int> (deCast(GLOBAL)["a"]) << endl;
+  cout << any_cast<int> (cast(GLOBAL)["a"]) << endl;
   cout << any_cast<string> (cast(cast(GLOBAL)["b"])["c"]) << endl;
 
   return 0;
