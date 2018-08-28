@@ -29,6 +29,7 @@ unordered_map<string, int> GLOBAL;
 	char *sval;
 }
 
+%token END_STATEMENT
 %token DECLARATION ATTRIBUTION DOT
 
 

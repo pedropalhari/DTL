@@ -19,4 +19,5 @@ using namespace std;
 "=" {return ATTRIBUTION;}
 "var " {return DECLARATION;}
 "." {return DOT;}
+";" {return END_STATEMENT;}
 %%
