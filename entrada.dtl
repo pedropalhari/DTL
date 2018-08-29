@@ -1,12 +1,7 @@
-var t;
-t = "aaa";
+var vitaoVaiTomarNoCu;
 
-var x;
+vitaoVaiTomarNoCu = {var meupau, var noteucu};
 
-x = 3;
-
-x = 4 + 7;
-
-x = {var td, var ts};
-
-x.td = 4;
+var quantosMetroDePicaOPedroTem;
+vitaoVaiTomarNoCu.meupau = 100;
+quantosMetroDePicaOPedroTem = vitaoVaiTomarNoCu.meupau + 300;

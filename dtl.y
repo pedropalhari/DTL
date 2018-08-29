@@ -98,7 +98,6 @@ objectDeclarationBody:
 
 object:
 	OPEN_CBRACKETS objectDeclarationBody CLOSE_CBRACKETS {
-		cout << "aqui" << endl; 
 		unordered_map<string, basicObject> *aux = (unordered_map<string, basicObject> *) $2;
 		$$ = aux;
 
@@ -143,7 +142,7 @@ varAttribution:
 	}
 	|	STRING ATTRIBUTION object ENDL {
 		basicObject auxObject;
-		auxObject.type = String;
+		auxObject.type = Object;
 		auxObject.obj = (unordered_map<string, basicObject> *) $3;
 		cast(GLOBAL)[$1] = auxObject;
 
@@ -175,14 +174,60 @@ varAttributionCascaded:
 				cast(auxDereference)[x] = auxObject;
 				stringForPrintingLater = x;				
 			} else { //Se não vai descendo recursivamente
-				cout << x <<  endl;
 				auxDereference = cast(auxDereference)[x];
 			}
 		}
 
-		//cast(GLOBAL)[$1] = auxObject;
+		cout << "VARIABLE ATTRIBUTION: (INTEGER) ";
+		
+		for(auto x : auxForCascadedObjects) 
+			if(x == auxForCascadedObjects.front())
+				cout << x;
+			else cout << "." << x;
 
-		//cout << "VARIABLE ATTRIBUTION: (INTEGER) " << $1 << " = ";
+		cout << " = ";
+
+		decast(cast(auxDereference)[stringForPrintingLater]);
+
+		auxForCascadedObjects.clear();		
+	}
+	| cascadedRef ATTRIBUTION string ENDL {
+		basicObject auxObject;
+		auxObject.type = String;
+		string aux2 = $3;
+		auxObject.obj = aux2;
+
+		string stringForPrintingLater;
+		basicObject auxDereference = GLOBAL;
+		for(auto x : auxForCascadedObjects){
+			if(x == auxForCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
+				cast(auxDereference)[x] = auxObject;
+				stringForPrintingLater = x;				
+			} else { //Se não vai descendo recursivamente
+				auxDereference = cast(auxDereference)[x];
+			}
+		}
+
+		decast(cast(auxDereference)[stringForPrintingLater]);
+
+		auxForCascadedObjects.clear();
+	}
+	| cascadedRef ATTRIBUTION object ENDL {
+		basicObject auxObject;
+		auxObject.type = Object;
+		auxObject.obj = (unordered_map<string, basicObject> *) $3;
+
+		string stringForPrintingLater;
+		basicObject auxDereference = GLOBAL;
+		for(auto x : auxForCascadedObjects){
+			if(x == auxForCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
+				cast(auxDereference)[x] = auxObject;
+				stringForPrintingLater = x;				
+			} else { //Se não vai descendo recursivamente
+				auxDereference = cast(auxDereference)[x];
+			}
+		}
+
 		decast(cast(auxDereference)[stringForPrintingLater]);
 
 		auxForCascadedObjects.clear();		
@@ -192,6 +237,23 @@ varAttributionCascaded:
 //CALCULATOR
 express: 
   INT {$$ = $1;} 
+	| STRING {
+			any aux = (cast(GLOBAL)[$1]);
+			cout << $1 << aux.type().name();
+			$$ = any_cast<int> ((cast(GLOBAL)[$1]).obj);
+		}
+	| cascadedRef {
+			basicObject auxDereference = GLOBAL;
+			for(auto x : auxForCascadedObjects){
+				if(x == auxForCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
+					$$ = any_cast<int> ((cast(auxDereference)[x]).obj);				
+				} else { //Se não vai descendo recursivamente
+					auxDereference = cast(auxDereference)[x];
+				}
+		}
+
+		auxForCascadedObjects.clear();
+	}
   | express DIV express {$$ = $1 / $3;}
   | express MUL express {$$ = $1 * $3;}
   | express SUM express {$$ = $1 + $3;}
