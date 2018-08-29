@@ -423,7 +423,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  11
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   61
+#define YYLAST   56
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  18
@@ -528,7 +528,7 @@ static const yytype_int8 yypact[] =
       39,    28,    41,    38,    -5,   -15,   -15,    43,    44,    -1,
      -15,    45,    46,    29,   -15,   -15,   -15,     3,     3,     3,
        3,   -15,   -15,   -15,   -15,   -15,   -15,    39,    27,    27,
-     -15,   -15,    42
+     -15,   -15,   -15
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -547,7 +547,7 @@ static const yytype_uint8 yydefact[] =
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -15,    13,    40,     5,    47,   -15,   -15,    33,   -15,   -14
+     -15,    13,    40,     5,    42,   -15,   -15,    33,   -15,   -14
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
@@ -566,8 +566,7 @@ static const yytype_uint8 yytable[] =
       16,     8,     9,    48,    49,    50,    51,    17,    26,    18,
       14,    15,    19,     6,    34,    20,    30,     6,     6,    31,
        6,    46,    47,    39,    40,     9,    32,    35,    15,    41,
-      42,    45,    52,    44,    27,    47,     0,     0,     0,     0,
-       0,    28
+      42,    45,    52,    44,    27,     0,    28
 };
 
 static const yytype_int8 yycheck[] =
@@ -577,8 +576,7 @@ static const yytype_int8 yycheck[] =
        7,     9,    10,    37,    38,    39,    40,     3,     6,     5,
        9,    10,     8,     0,     6,    11,     5,     4,     5,     5,
        7,    12,    13,    16,    17,    10,     7,     6,    10,     6,
-       6,     5,    47,     8,    14,    13,    -1,    -1,    -1,    -1,
-      -1,    14
+       6,     5,    47,     8,    14,    -1,    14
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -1285,7 +1283,7 @@ yyreduce:
         case 6:
 #line 81 "dtl.y" /* yacc.c:1646  */
     {(yyval.sval) = (yyvsp[-1].sval);}
-#line 1289 "dtl.tab.c" /* yacc.c:1646  */
+#line 1287 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
@@ -1299,7 +1297,7 @@ yyreduce:
 			
 			(yyval.oval) = auxForObjectInitialization;
 		}
-#line 1303 "dtl.tab.c" /* yacc.c:1646  */
+#line 1301 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
@@ -1311,7 +1309,7 @@ yyreduce:
 		//Limpa o objeto no final, porque o objeto criado já foi passado para ser assimilado
 		auxForObjectInitialization = new unordered_map<string, basicObject>();
 		}
-#line 1315 "dtl.tab.c" /* yacc.c:1646  */
+#line 1313 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
@@ -1324,7 +1322,7 @@ yyreduce:
 
 		cout << "VARIABLE DECLARATION: " << (yyvsp[-1].sval) << endl;
   }
-#line 1328 "dtl.tab.c" /* yacc.c:1646  */
+#line 1326 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
@@ -1339,7 +1337,7 @@ yyreduce:
 
 		decast(cast(GLOBAL)[(yyvsp[-3].sval)]);
 	}
-#line 1343 "dtl.tab.c" /* yacc.c:1646  */
+#line 1341 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
@@ -1355,7 +1353,7 @@ yyreduce:
 
 		decast(cast(GLOBAL)[(yyvsp[-3].sval)]);
 	}
-#line 1359 "dtl.tab.c" /* yacc.c:1646  */
+#line 1357 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
@@ -1374,19 +1372,19 @@ yyreduce:
 		}
 		cout << "}" << endl;
 	}
-#line 1378 "dtl.tab.c" /* yacc.c:1646  */
+#line 1376 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
 #line 160 "dtl.y" /* yacc.c:1646  */
     { auxForCascadedObjects.push_back((yyvsp[-2].sval)); auxForCascadedObjects.push_back((yyvsp[0].sval));}
-#line 1384 "dtl.tab.c" /* yacc.c:1646  */
+#line 1382 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
 #line 161 "dtl.y" /* yacc.c:1646  */
     {auxForCascadedObjects.push_back((yyvsp[0].sval));}
-#line 1390 "dtl.tab.c" /* yacc.c:1646  */
+#line 1388 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
@@ -1420,7 +1418,7 @@ yyreduce:
 
 		auxForCascadedObjects.clear();		
 	}
-#line 1424 "dtl.tab.c" /* yacc.c:1646  */
+#line 1422 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
@@ -1446,7 +1444,7 @@ yyreduce:
 
 		auxForCascadedObjects.clear();
 	}
-#line 1450 "dtl.tab.c" /* yacc.c:1646  */
+#line 1448 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
@@ -1471,13 +1469,13 @@ yyreduce:
 
 		auxForCascadedObjects.clear();		
 	}
-#line 1475 "dtl.tab.c" /* yacc.c:1646  */
+#line 1473 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
 #line 239 "dtl.y" /* yacc.c:1646  */
     {(yyval.ival) = (yyvsp[0].ival);}
-#line 1481 "dtl.tab.c" /* yacc.c:1646  */
+#line 1479 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
@@ -1487,7 +1485,7 @@ yyreduce:
 			cout << (yyvsp[0].sval) << aux.type().name();
 			(yyval.ival) = any_cast<int> ((cast(GLOBAL)[(yyvsp[0].sval)]).obj);
 		}
-#line 1491 "dtl.tab.c" /* yacc.c:1646  */
+#line 1489 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
@@ -1504,35 +1502,35 @@ yyreduce:
 
 		auxForCascadedObjects.clear();
 	}
-#line 1508 "dtl.tab.c" /* yacc.c:1646  */
+#line 1506 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
 #line 257 "dtl.y" /* yacc.c:1646  */
     {(yyval.ival) = (yyvsp[-2].ival) / (yyvsp[0].ival);}
-#line 1514 "dtl.tab.c" /* yacc.c:1646  */
+#line 1512 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
 #line 258 "dtl.y" /* yacc.c:1646  */
     {(yyval.ival) = (yyvsp[-2].ival) * (yyvsp[0].ival);}
-#line 1520 "dtl.tab.c" /* yacc.c:1646  */
+#line 1518 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
 #line 259 "dtl.y" /* yacc.c:1646  */
     {(yyval.ival) = (yyvsp[-2].ival) + (yyvsp[0].ival);}
-#line 1526 "dtl.tab.c" /* yacc.c:1646  */
+#line 1524 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
 #line 260 "dtl.y" /* yacc.c:1646  */
     {(yyval.ival) = (yyvsp[-2].ival) - (yyvsp[0].ival);}
-#line 1532 "dtl.tab.c" /* yacc.c:1646  */
+#line 1530 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1536 "dtl.tab.c" /* yacc.c:1646  */
+#line 1534 "dtl.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

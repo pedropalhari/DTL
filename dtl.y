@@ -63,7 +63,7 @@ void decast(basicObject x) {
 %token SUM MINUS MUL DIV
 %left SUM MINUS
 %left MUL DIV
-
+%left COMMA
 
 %%
 // This is the actual grammar that bison will parse, but for right now it's just

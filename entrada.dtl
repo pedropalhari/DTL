@@ -1,7 +1,7 @@
-var vitaoVaiTomarNoCu;
+var variable;
 
-vitaoVaiTomarNoCu = {var meupau, var noteucu};
+variable = {var ttt, var hhh};
 
 var quantosMetroDePicaOPedroTem;
-vitaoVaiTomarNoCu.meupau = 100;
-quantosMetroDePicaOPedroTem = vitaoVaiTomarNoCu.meupau + 300;
+variable.ttt = 100;
+quantosMetroDePicaOPedroTem = variable.ttt + 300;
