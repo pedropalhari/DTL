@@ -2,11 +2,11 @@
 #include <iostream>
 #include <typeinfo>
 #include <unordered_map>
-#define cast(X) (*any_cast<unordered_map<string, basicObject> *>(X.obj))
+#define cast(X) (*any_cast<unordered_map<string, basicObject>*>(X.obj))
 
 using namespace std;
 
-enum Type {Object, Integer, Float, String};
+enum Type { Object, Integer, Float, String };
 
 typedef struct {
   Type type;
@@ -26,7 +26,7 @@ int main() {
   obj1.type = Integer;
   obj1.obj = 3;
 
-  //a = 3;
+  // a = 3;
   cast(GLOBAL)["a"] = obj1;
 
   basicObject obj2;
@@ -37,8 +37,8 @@ int main() {
   obj3.type = Integer;
   obj3.obj = 4;
 
-  //b = {};
-  //b.c = 4;
+  // b = {};
+  // b.c = 4;
   cast(GLOBAL)["b"] = obj2;
   cast(cast(GLOBAL)["b"])["c"] = obj3;
 
