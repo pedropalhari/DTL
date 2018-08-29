@@ -1,9 +1,11 @@
 snazzle.l
 %{
+#include <unordered_map>
+#include <vector>
 #include <cstdio>
-
-#include "dtl.tab.h"  // to get the token types from Bison
 #include <iostream>
+#include "dtl.tab.h"  // to get the token types from Bison
+
 using namespace std;
 
 %}
@@ -16,8 +18,16 @@ using namespace std;
 	yylval.sval = strdup(yytext);
 	return STRING;
 }
+"+" {return SUM;}
+"-" {return MINUS;}
+"*" {return MUL;}
+"/" {return DIV;}
+"\"" {return QMARKS;}
 "=" {return ATTRIBUTION;}
 "var " {return DECLARATION;}
 "." {return DOT;}
-";" {return END_STATEMENT;}
+";" {return ENDL;}
+"," {return COMMA;}
+"{" {return OPEN_CBRACKETS;}
+"}" {return CLOSE_CBRACKETS;}
 %%

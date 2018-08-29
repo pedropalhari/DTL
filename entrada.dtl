@@ -1,1 +1,12 @@
-var teste
+var t;
+t = "aaa";
+
+var x;
+
+x = 3;
+
+x = 4 + 7;
+
+x = {var td, var ts};
+
+x.td = 4;

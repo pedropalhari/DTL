@@ -45,12 +45,21 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    DECLARATION = 258,
-    ATTRIBUTION = 259,
-    DOT = 260,
-    INT = 261,
-    FLOAT = 262,
-    STRING = 263
+    INT = 258,
+    FLOAT = 259,
+    STRING = 260,
+    ENDL = 261,
+    DECLARATION = 262,
+    QMARKS = 263,
+    ATTRIBUTION = 264,
+    DOT = 265,
+    OPEN_CBRACKETS = 266,
+    CLOSE_CBRACKETS = 267,
+    COMMA = 268,
+    SUM = 269,
+    MINUS = 270,
+    MUL = 271,
+    DIV = 272
   };
 #endif
 
@@ -59,13 +68,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 26 "dtl.y" /* yacc.c:1909  */
+#line 38 "dtl.y" /* yacc.c:1909  */
 
 	int ival;
 	float fval;
 	char *sval;
+	void *oval; //Object
 
-#line 69 "dtl.tab.h" /* yacc.c:1909  */
+#line 79 "dtl.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
