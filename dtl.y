@@ -26,6 +26,8 @@ typedef struct {
 unordered_map<string, basicObject> *auxForObjectInitialization = new unordered_map<string, basicObject>();
 vector<string> auxForCascadedObjects = vector<string>();
 
+int shouldExecute = 1;
+
 basicObject GLOBAL;
 
 void decast(basicObject x) {
@@ -62,12 +64,13 @@ void decast(basicObject x) {
 %token DECLARATION QMARKS ATTRIBUTION DOT
 %token OPEN_CBRACKETS CLOSE_CBRACKETS COMMA OPEN_PAREN CLOSE_PAREN
 %token GREATER LESSER EQUALS N_EQUALS
+%token IF_S ELSE_S
 
 %token SUM MINUS MUL DIV
 %left SUM MINUS
 %left MUL DIV
 %left COMMA
-%left GREATER LESSER EQUALS N_EQUALS
+%left GREATER LESSER EQUALS N_EQUALS 
 
 %%
 // This is the actual grammar that bison will parse, but for right now it's just
@@ -78,7 +81,7 @@ body:
 	| varDeclaration body
 	| varAttribution body
 	| varAttributionCascaded body
-	| statement body
+	| ifelse body
 	;
 
 //TYPE RECOGNITION
@@ -124,15 +127,17 @@ varDeclaration:
 	;
 
 varAttribution:
- STRING ATTRIBUTION express ENDL {
+ STRING ATTRIBUTION statement ENDL {
 		basicObject auxObject;
 		auxObject.type = Integer;
 		auxObject.obj = $3;
+
+		if(shouldExecute)
 		cast(GLOBAL)[$1] = auxObject;
 
 		cout << "VARIABLE ATTRIBUTION: (INTEGER) " << $1 << " = ";
 
-		decast(cast(GLOBAL)[$1]);
+		decast(cast(GLOBAL)[$1]);	 
 	}
 	|	STRING ATTRIBUTION string ENDL {
 		basicObject auxObject;
@@ -149,6 +154,8 @@ varAttribution:
 		basicObject auxObject;
 		auxObject.type = Object;
 		auxObject.obj = (unordered_map<string, basicObject> *) $3;
+		
+		if(shouldExecute)
 		cast(GLOBAL)[$1] = auxObject;
 
 		cout << "VARIABLE ATTRIBUTION: (OBJECT) " << $1 << " = {" << endl;
@@ -167,7 +174,7 @@ cascadedRef:
 	;
 
 varAttributionCascaded:
- cascadedRef ATTRIBUTION express ENDL {
+ cascadedRef ATTRIBUTION statement ENDL {
 		basicObject auxObject;
 		auxObject.type = Integer;
 		auxObject.obj = $3;
@@ -273,7 +280,18 @@ statement:
 	| statement LESSER statement {$$ = $1 < $3; cout << $$ << endl;}
 	| statement EQUALS statement {$$ = $1 == $3; cout << $$ << endl;}
 	| statement N_EQUALS statement {$$ = $1 != $3; cout << $$ << endl;}
+	| OPEN_PAREN statement CLOSE_PAREN {$$ = $2;}
 	;
+
+codeblock:
+	 OPEN_CBRACKETS body CLOSE_CBRACKETS;
+
+ifhead:
+	IF_S OPEN_PAREN statement CLOSE_PAREN {cout << "shouldNot" << endl; shouldExecute = 0;};
+
+ifelse:
+	 ifhead codeblock { shouldExecute = 1; cout << "should";}
+
 %%
 
 int main(int, char *argv[]) {

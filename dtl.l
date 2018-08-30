@@ -10,14 +10,6 @@ using namespace std;
 
 %}
 %%
-[ \t\n]           ;
-[0-9]+\.[0-9]+    { yylval.fval = atof(yytext); return FLOAT; }
-[0-9]+            { yylval.ival = atoi(yytext); return INT; }
-[a-zA-Z0-9]+      {
-	// We have to strdup because we can't rely on yytext not changing underneath us:
-	yylval.sval = strdup(yytext);
-	return STRING;
-}
 "+" {return SUM;}
 "-" {return MINUS;}
 "*" {return MUL;}
@@ -36,4 +28,14 @@ using namespace std;
 "<" {return LESSER;}
 "==" {return EQUALS;}
 "!=" {return N_EQUALS;}
+"if" {return IF_S;}
+"else" {return ELSE_S;}
+[ \t\n]           ;
+[0-9]+\.[0-9]+    { yylval.fval = atof(yytext); return FLOAT; }
+[0-9]+            { yylval.ival = atoi(yytext); return INT; }
+[a-zA-Z0-9]+      {
+	// We have to strdup because we can't rely on yytext not changing underneath us:
+	yylval.sval = strdup(yytext);
+	return STRING;
+}
 %%

@@ -1,0 +1,873 @@
+Terminals unused in grammar
+
+   FLOAT
+
+
+State 17 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: body $end
+
+    1 body: %empty
+    2     | varDeclaration body
+    3     | varAttribution body
+    4     | varAttributionCascaded body
+    5     | statement body
+
+    6 string: QMARKS STRING QMARKS
+
+    7 objectDeclarationBody: DECLARATION STRING
+    8                      | objectDeclarationBody COMMA objectDeclarationBody
+
+    9 object: OPEN_CBRACKETS objectDeclarationBody CLOSE_CBRACKETS
+
+   10 varDeclaration: DECLARATION STRING ENDL
+
+   11 varAttribution: STRING ATTRIBUTION express ENDL
+   12               | STRING ATTRIBUTION string ENDL
+   13               | STRING ATTRIBUTION object ENDL
+
+   14 cascadedRef: STRING DOT STRING
+   15            | cascadedRef DOT STRING
+
+   16 varAttributionCascaded: cascadedRef ATTRIBUTION express ENDL
+   17                       | cascadedRef ATTRIBUTION string ENDL
+   18                       | cascadedRef ATTRIBUTION object ENDL
+
+   19 express: INT
+   20        | STRING
+   21        | cascadedRef
+   22        | express DIV express
+   23        | express MUL express
+   24        | express SUM express
+   25        | express MINUS express
+   26        | OPEN_PAREN express CLOSE_PAREN
+
+   27 statement: express
+   28          | statement GREATER statement
+   29          | statement LESSER statement
+   30          | statement EQUALS statement
+   31          | statement N_EQUALS statement
+   32          | OPEN_PAREN statement CLOSE_PAREN
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+INT (258) 19
+FLOAT (259)
+STRING (260) 6 7 10 11 12 13 14 15 20
+ENDL (261) 10 11 12 13 16 17 18
+DECLARATION (262) 7 10
+QMARKS (263) 6
+ATTRIBUTION (264) 11 12 13 16 17 18
+DOT (265) 14 15
+OPEN_CBRACKETS (266) 9
+CLOSE_CBRACKETS (267) 9
+COMMA (268) 8
+OPEN_PAREN (269) 26 32
+CLOSE_PAREN (270) 26 32
+GREATER (271) 28
+LESSER (272) 29
+EQUALS (273) 30
+N_EQUALS (274) 31
+SUM (275) 24
+MINUS (276) 25
+MUL (277) 23
+DIV (278) 22
+
+
+Nonterminals, with rules where they appear
+
+$accept (24)
+    on left: 0
+body (25)
+    on left: 1 2 3 4 5, on right: 0 2 3 4 5
+string (26)
+    on left: 6, on right: 12 17
+objectDeclarationBody (27)
+    on left: 7 8, on right: 8 9
+object (28)
+    on left: 9, on right: 13 18
+varDeclaration (29)
+    on left: 10, on right: 2
+varAttribution (30)
+    on left: 11 12 13, on right: 3
+cascadedRef (31)
+    on left: 14 15, on right: 15 16 17 18 21
+varAttributionCascaded (32)
+    on left: 16 17 18, on right: 4
+express (33)
+    on left: 19 20 21 22 23 24 25 26, on right: 11 16 22 23 24 25 26
+    27
+statement (34)
+    on left: 27 28 29 30 31 32, on right: 5 28 29 30 31 32
+
+
+State 0
+
+    0 $accept: . body $end
+
+    INT          shift, and go to state 1
+    STRING       shift, and go to state 2
+    DECLARATION  shift, and go to state 3
+    OPEN_PAREN   shift, and go to state 4
+
+    $default  reduce using rule 1 (body)
+
+    body                    go to state 5
+    varDeclaration          go to state 6
+    varAttribution          go to state 7
+    cascadedRef             go to state 8
+    varAttributionCascaded  go to state 9
+    express                 go to state 10
+    statement               go to state 11
+
+
+State 1
+
+   19 express: INT .
+
+    $default  reduce using rule 19 (express)
+
+
+State 2
+
+   11 varAttribution: STRING . ATTRIBUTION express ENDL
+   12               | STRING . ATTRIBUTION string ENDL
+   13               | STRING . ATTRIBUTION object ENDL
+   14 cascadedRef: STRING . DOT STRING
+   20 express: STRING .
+
+    ATTRIBUTION  shift, and go to state 12
+    DOT          shift, and go to state 13
+
+    $default  reduce using rule 20 (express)
+
+
+State 3
+
+   10 varDeclaration: DECLARATION . STRING ENDL
+
+    STRING  shift, and go to state 14
+
+
+State 4
+
+   26 express: OPEN_PAREN . express CLOSE_PAREN
+   32 statement: OPEN_PAREN . statement CLOSE_PAREN
+
+    INT         shift, and go to state 1
+    STRING      shift, and go to state 15
+    OPEN_PAREN  shift, and go to state 4
+
+    cascadedRef  go to state 16
+    express      go to state 17
+    statement    go to state 18
+
+
+State 5
+
+    0 $accept: body . $end
+
+    $end  shift, and go to state 19
+
+
+State 6
+
+    2 body: varDeclaration . body
+
+    INT          shift, and go to state 1
+    STRING       shift, and go to state 2
+    DECLARATION  shift, and go to state 3
+    OPEN_PAREN   shift, and go to state 4
+
+    $default  reduce using rule 1 (body)
+
+    body                    go to state 20
+    varDeclaration          go to state 6
+    varAttribution          go to state 7
+    cascadedRef             go to state 8
+    varAttributionCascaded  go to state 9
+    express                 go to state 10
+    statement               go to state 11
+
+
+State 7
+
+    3 body: varAttribution . body
+
+    INT          shift, and go to state 1
+    STRING       shift, and go to state 2
+    DECLARATION  shift, and go to state 3
+    OPEN_PAREN   shift, and go to state 4
+
+    $default  reduce using rule 1 (body)
+
+    body                    go to state 21
+    varDeclaration          go to state 6
+    varAttribution          go to state 7
+    cascadedRef             go to state 8
+    varAttributionCascaded  go to state 9
+    express                 go to state 10
+    statement               go to state 11
+
+
+State 8
+
+   15 cascadedRef: cascadedRef . DOT STRING
+   16 varAttributionCascaded: cascadedRef . ATTRIBUTION express ENDL
+   17                       | cascadedRef . ATTRIBUTION string ENDL
+   18                       | cascadedRef . ATTRIBUTION object ENDL
+   21 express: cascadedRef .
+
+    ATTRIBUTION  shift, and go to state 22
+    DOT          shift, and go to state 23
+
+    $default  reduce using rule 21 (express)
+
+
+State 9
+
+    4 body: varAttributionCascaded . body
+
+    INT          shift, and go to state 1
+    STRING       shift, and go to state 2
+    DECLARATION  shift, and go to state 3
+    OPEN_PAREN   shift, and go to state 4
+
+    $default  reduce using rule 1 (body)
+
+    body                    go to state 24
+    varDeclaration          go to state 6
+    varAttribution          go to state 7
+    cascadedRef             go to state 8
+    varAttributionCascaded  go to state 9
+    express                 go to state 10
+    statement               go to state 11
+
+
+State 10
+
+   22 express: express . DIV express
+   23        | express . MUL express
+   24        | express . SUM express
+   25        | express . MINUS express
+   27 statement: express .
+
+    SUM    shift, and go to state 25
+    MINUS  shift, and go to state 26
+    MUL    shift, and go to state 27
+    DIV    shift, and go to state 28
+
+    $default  reduce using rule 27 (statement)
+
+
+State 11
+
+    5 body: statement . body
+   28 statement: statement . GREATER statement
+   29          | statement . LESSER statement
+   30          | statement . EQUALS statement
+   31          | statement . N_EQUALS statement
+
+    INT          shift, and go to state 1
+    STRING       shift, and go to state 2
+    DECLARATION  shift, and go to state 3
+    OPEN_PAREN   shift, and go to state 4
+    GREATER      shift, and go to state 29
+    LESSER       shift, and go to state 30
+    EQUALS       shift, and go to state 31
+    N_EQUALS     shift, and go to state 32
+
+    $default  reduce using rule 1 (body)
+
+    body                    go to state 33
+    varDeclaration          go to state 6
+    varAttribution          go to state 7
+    cascadedRef             go to state 8
+    varAttributionCascaded  go to state 9
+    express                 go to state 10
+    statement               go to state 11
+
+
+State 12
+
+   11 varAttribution: STRING ATTRIBUTION . express ENDL
+   12               | STRING ATTRIBUTION . string ENDL
+   13               | STRING ATTRIBUTION . object ENDL
+
+    INT             shift, and go to state 1
+    STRING          shift, and go to state 15
+    QMARKS          shift, and go to state 34
+    OPEN_CBRACKETS  shift, and go to state 35
+    OPEN_PAREN      shift, and go to state 36
+
+    string       go to state 37
+    object       go to state 38
+    cascadedRef  go to state 16
+    express      go to state 39
+
+
+State 13
+
+   14 cascadedRef: STRING DOT . STRING
+
+    STRING  shift, and go to state 40
+
+
+State 14
+
+   10 varDeclaration: DECLARATION STRING . ENDL
+
+    ENDL  shift, and go to state 41
+
+
+State 15
+
+   14 cascadedRef: STRING . DOT STRING
+   20 express: STRING .
+
+    DOT  shift, and go to state 13
+
+    $default  reduce using rule 20 (express)
+
+
+State 16
+
+   15 cascadedRef: cascadedRef . DOT STRING
+   21 express: cascadedRef .
+
+    DOT  shift, and go to state 23
+
+    $default  reduce using rule 21 (express)
+
+
+State 17
+
+   22 express: express . DIV express
+   23        | express . MUL express
+   24        | express . SUM express
+   25        | express . MINUS express
+   26        | OPEN_PAREN express . CLOSE_PAREN
+   27 statement: express .
+
+    CLOSE_PAREN  shift, and go to state 42
+    SUM          shift, and go to state 25
+    MINUS        shift, and go to state 26
+    MUL          shift, and go to state 27
+    DIV          shift, and go to state 28
+
+    CLOSE_PAREN  [reduce using rule 27 (statement)]
+    $default     reduce using rule 27 (statement)
+
+
+State 18
+
+   28 statement: statement . GREATER statement
+   29          | statement . LESSER statement
+   30          | statement . EQUALS statement
+   31          | statement . N_EQUALS statement
+   32          | OPEN_PAREN statement . CLOSE_PAREN
+
+    CLOSE_PAREN  shift, and go to state 43
+    GREATER      shift, and go to state 29
+    LESSER       shift, and go to state 30
+    EQUALS       shift, and go to state 31
+    N_EQUALS     shift, and go to state 32
+
+
+State 19
+
+    0 $accept: body $end .
+
+    $default  accept
+
+
+State 20
+
+    2 body: varDeclaration body .
+
+    $default  reduce using rule 2 (body)
+
+
+State 21
+
+    3 body: varAttribution body .
+
+    $default  reduce using rule 3 (body)
+
+
+State 22
+
+   16 varAttributionCascaded: cascadedRef ATTRIBUTION . express ENDL
+   17                       | cascadedRef ATTRIBUTION . string ENDL
+   18                       | cascadedRef ATTRIBUTION . object ENDL
+
+    INT             shift, and go to state 1
+    STRING          shift, and go to state 15
+    QMARKS          shift, and go to state 34
+    OPEN_CBRACKETS  shift, and go to state 35
+    OPEN_PAREN      shift, and go to state 36
+
+    string       go to state 44
+    object       go to state 45
+    cascadedRef  go to state 16
+    express      go to state 46
+
+
+State 23
+
+   15 cascadedRef: cascadedRef DOT . STRING
+
+    STRING  shift, and go to state 47
+
+
+State 24
+
+    4 body: varAttributionCascaded body .
+
+    $default  reduce using rule 4 (body)
+
+
+State 25
+
+   24 express: express SUM . express
+
+    INT         shift, and go to state 1
+    STRING      shift, and go to state 15
+    OPEN_PAREN  shift, and go to state 36
+
+    cascadedRef  go to state 16
+    express      go to state 48
+
+
+State 26
+
+   25 express: express MINUS . express
+
+    INT         shift, and go to state 1
+    STRING      shift, and go to state 15
+    OPEN_PAREN  shift, and go to state 36
+
+    cascadedRef  go to state 16
+    express      go to state 49
+
+
+State 27
+
+   23 express: express MUL . express
+
+    INT         shift, and go to state 1
+    STRING      shift, and go to state 15
+    OPEN_PAREN  shift, and go to state 36
+
+    cascadedRef  go to state 16
+    express      go to state 50
+
+
+State 28
+
+   22 express: express DIV . express
+
+    INT         shift, and go to state 1
+    STRING      shift, and go to state 15
+    OPEN_PAREN  shift, and go to state 36
+
+    cascadedRef  go to state 16
+    express      go to state 51
+
+
+State 29
+
+   28 statement: statement GREATER . statement
+
+    INT         shift, and go to state 1
+    STRING      shift, and go to state 15
+    OPEN_PAREN  shift, and go to state 4
+
+    cascadedRef  go to state 16
+    express      go to state 10
+    statement    go to state 52
+
+
+State 30
+
+   29 statement: statement LESSER . statement
+
+    INT         shift, and go to state 1
+    STRING      shift, and go to state 15
+    OPEN_PAREN  shift, and go to state 4
+
+    cascadedRef  go to state 16
+    express      go to state 10
+    statement    go to state 53
+
+
+State 31
+
+   30 statement: statement EQUALS . statement
+
+    INT         shift, and go to state 1
+    STRING      shift, and go to state 15
+    OPEN_PAREN  shift, and go to state 4
+
+    cascadedRef  go to state 16
+    express      go to state 10
+    statement    go to state 54
+
+
+State 32
+
+   31 statement: statement N_EQUALS . statement
+
+    INT         shift, and go to state 1
+    STRING      shift, and go to state 15
+    OPEN_PAREN  shift, and go to state 4
+
+    cascadedRef  go to state 16
+    express      go to state 10
+    statement    go to state 55
+
+
+State 33
+
+    5 body: statement body .
+
+    $default  reduce using rule 5 (body)
+
+
+State 34
+
+    6 string: QMARKS . STRING QMARKS
+
+    STRING  shift, and go to state 56
+
+
+State 35
+
+    9 object: OPEN_CBRACKETS . objectDeclarationBody CLOSE_CBRACKETS
+
+    DECLARATION  shift, and go to state 57
+
+    objectDeclarationBody  go to state 58
+
+
+State 36
+
+   26 express: OPEN_PAREN . express CLOSE_PAREN
+
+    INT         shift, and go to state 1
+    STRING      shift, and go to state 15
+    OPEN_PAREN  shift, and go to state 36
+
+    cascadedRef  go to state 16
+    express      go to state 59
+
+
+State 37
+
+   12 varAttribution: STRING ATTRIBUTION string . ENDL
+
+    ENDL  shift, and go to state 60
+
+
+State 38
+
+   13 varAttribution: STRING ATTRIBUTION object . ENDL
+
+    ENDL  shift, and go to state 61
+
+
+State 39
+
+   11 varAttribution: STRING ATTRIBUTION express . ENDL
+   22 express: express . DIV express
+   23        | express . MUL express
+   24        | express . SUM express
+   25        | express . MINUS express
+
+    ENDL   shift, and go to state 62
+    SUM    shift, and go to state 25
+    MINUS  shift, and go to state 26
+    MUL    shift, and go to state 27
+    DIV    shift, and go to state 28
+
+
+State 40
+
+   14 cascadedRef: STRING DOT STRING .
+
+    $default  reduce using rule 14 (cascadedRef)
+
+
+State 41
+
+   10 varDeclaration: DECLARATION STRING ENDL .
+
+    $default  reduce using rule 10 (varDeclaration)
+
+
+State 42
+
+   26 express: OPEN_PAREN express CLOSE_PAREN .
+
+    $default  reduce using rule 26 (express)
+
+
+State 43
+
+   32 statement: OPEN_PAREN statement CLOSE_PAREN .
+
+    $default  reduce using rule 32 (statement)
+
+
+State 44
+
+   17 varAttributionCascaded: cascadedRef ATTRIBUTION string . ENDL
+
+    ENDL  shift, and go to state 63
+
+
+State 45
+
+   18 varAttributionCascaded: cascadedRef ATTRIBUTION object . ENDL
+
+    ENDL  shift, and go to state 64
+
+
+State 46
+
+   16 varAttributionCascaded: cascadedRef ATTRIBUTION express . ENDL
+   22 express: express . DIV express
+   23        | express . MUL express
+   24        | express . SUM express
+   25        | express . MINUS express
+
+    ENDL   shift, and go to state 65
+    SUM    shift, and go to state 25
+    MINUS  shift, and go to state 26
+    MUL    shift, and go to state 27
+    DIV    shift, and go to state 28
+
+
+State 47
+
+   15 cascadedRef: cascadedRef DOT STRING .
+
+    $default  reduce using rule 15 (cascadedRef)
+
+
+State 48
+
+   22 express: express . DIV express
+   23        | express . MUL express
+   24        | express . SUM express
+   24        | express SUM express .
+   25        | express . MINUS express
+
+    MUL  shift, and go to state 27
+    DIV  shift, and go to state 28
+
+    $default  reduce using rule 24 (express)
+
+
+State 49
+
+   22 express: express . DIV express
+   23        | express . MUL express
+   24        | express . SUM express
+   25        | express . MINUS express
+   25        | express MINUS express .
+
+    MUL  shift, and go to state 27
+    DIV  shift, and go to state 28
+
+    $default  reduce using rule 25 (express)
+
+
+State 50
+
+   22 express: express . DIV express
+   23        | express . MUL express
+   23        | express MUL express .
+   24        | express . SUM express
+   25        | express . MINUS express
+
+    $default  reduce using rule 23 (express)
+
+
+State 51
+
+   22 express: express . DIV express
+   22        | express DIV express .
+   23        | express . MUL express
+   24        | express . SUM express
+   25        | express . MINUS express
+
+    $default  reduce using rule 22 (express)
+
+
+State 52
+
+   28 statement: statement . GREATER statement
+   28          | statement GREATER statement .
+   29          | statement . LESSER statement
+   30          | statement . EQUALS statement
+   31          | statement . N_EQUALS statement
+
+    $default  reduce using rule 28 (statement)
+
+
+State 53
+
+   28 statement: statement . GREATER statement
+   29          | statement . LESSER statement
+   29          | statement LESSER statement .
+   30          | statement . EQUALS statement
+   31          | statement . N_EQUALS statement
+
+    $default  reduce using rule 29 (statement)
+
+
+State 54
+
+   28 statement: statement . GREATER statement
+   29          | statement . LESSER statement
+   30          | statement . EQUALS statement
+   30          | statement EQUALS statement .
+   31          | statement . N_EQUALS statement
+
+    $default  reduce using rule 30 (statement)
+
+
+State 55
+
+   28 statement: statement . GREATER statement
+   29          | statement . LESSER statement
+   30          | statement . EQUALS statement
+   31          | statement . N_EQUALS statement
+   31          | statement N_EQUALS statement .
+
+    $default  reduce using rule 31 (statement)
+
+
+State 56
+
+    6 string: QMARKS STRING . QMARKS
+
+    QMARKS  shift, and go to state 66
+
+
+State 57
+
+    7 objectDeclarationBody: DECLARATION . STRING
+
+    STRING  shift, and go to state 67
+
+
+State 58
+
+    8 objectDeclarationBody: objectDeclarationBody . COMMA objectDeclarationBody
+    9 object: OPEN_CBRACKETS objectDeclarationBody . CLOSE_CBRACKETS
+
+    CLOSE_CBRACKETS  shift, and go to state 68
+    COMMA            shift, and go to state 69
+
+
+State 59
+
+   22 express: express . DIV express
+   23        | express . MUL express
+   24        | express . SUM express
+   25        | express . MINUS express
+   26        | OPEN_PAREN express . CLOSE_PAREN
+
+    CLOSE_PAREN  shift, and go to state 42
+    SUM          shift, and go to state 25
+    MINUS        shift, and go to state 26
+    MUL          shift, and go to state 27
+    DIV          shift, and go to state 28
+
+
+State 60
+
+   12 varAttribution: STRING ATTRIBUTION string ENDL .
+
+    $default  reduce using rule 12 (varAttribution)
+
+
+State 61
+
+   13 varAttribution: STRING ATTRIBUTION object ENDL .
+
+    $default  reduce using rule 13 (varAttribution)
+
+
+State 62
+
+   11 varAttribution: STRING ATTRIBUTION express ENDL .
+
+    $default  reduce using rule 11 (varAttribution)
+
+
+State 63
+
+   17 varAttributionCascaded: cascadedRef ATTRIBUTION string ENDL .
+
+    $default  reduce using rule 17 (varAttributionCascaded)
+
+
+State 64
+
+   18 varAttributionCascaded: cascadedRef ATTRIBUTION object ENDL .
+
+    $default  reduce using rule 18 (varAttributionCascaded)
+
+
+State 65
+
+   16 varAttributionCascaded: cascadedRef ATTRIBUTION express ENDL .
+
+    $default  reduce using rule 16 (varAttributionCascaded)
+
+
+State 66
+
+    6 string: QMARKS STRING QMARKS .
+
+    $default  reduce using rule 6 (string)
+
+
+State 67
+
+    7 objectDeclarationBody: DECLARATION STRING .
+
+    $default  reduce using rule 7 (objectDeclarationBody)
+
+
+State 68
+
+    9 object: OPEN_CBRACKETS objectDeclarationBody CLOSE_CBRACKETS .
+
+    $default  reduce using rule 9 (object)
+
+
+State 69
+
+    8 objectDeclarationBody: objectDeclarationBody COMMA . objectDeclarationBody
+
+    DECLARATION  shift, and go to state 57
+
+    objectDeclarationBody  go to state 70
+
+
+State 70
+
+    8 objectDeclarationBody: objectDeclarationBody . COMMA objectDeclarationBody
+    8                      | objectDeclarationBody COMMA objectDeclarationBody .
+
+    $default  reduce using rule 8 (objectDeclarationBody)
