@@ -82,7 +82,7 @@ extern FILE *yyin;
 void yyerror(const char *s);
 
 //LANGUAGE BACKEND
-enum Type { Object, Integer, Float, String };
+enum Type { Object, Integer, Float, String, Function };
 typedef struct {
   Type type;
   any obj;
@@ -499,7 +499,7 @@ static const yytype_uint16 yyrline[] =
      107,   111,   122,   133,   145,   157,   176,   177,   181,   213,
      235,   260,   261,   265,   277,   278,   279,   280,   281,   286,
      287,   288,   289,   290,   291,   292,   293,   297,   300,   303,
-     306,   307,   310,   311,   315
+     307,   308,   311,   312,   316
 };
 #endif
 
@@ -1656,31 +1656,31 @@ yyreduce:
     break;
 
   case 40:
-#line 306 "dtl.y" /* yacc.c:1646  */
+#line 307 "dtl.y" /* yacc.c:1646  */
     { shouldExecute = 1;}
 #line 1662 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 307 "dtl.y" /* yacc.c:1646  */
+#line 308 "dtl.y" /* yacc.c:1646  */
     { shouldExecute = 1;}
 #line 1668 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 310 "dtl.y" /* yacc.c:1646  */
+#line 311 "dtl.y" /* yacc.c:1646  */
     {decast(cast(GLOBAL)[(yyvsp[0].sval)]);}
 #line 1674 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 311 "dtl.y" /* yacc.c:1646  */
+#line 312 "dtl.y" /* yacc.c:1646  */
     {decast(cast(GLOBAL)[(yyvsp[0].sval)]);}
 #line 1680 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 315 "dtl.y" /* yacc.c:1646  */
+#line 316 "dtl.y" /* yacc.c:1646  */
     {}
 #line 1686 "dtl.tab.c" /* yacc.c:1646  */
     break;
@@ -1914,7 +1914,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 317 "dtl.y" /* yacc.c:1906  */
+#line 318 "dtl.y" /* yacc.c:1906  */
 
 
 int main(int, char *argv[]) {

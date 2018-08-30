@@ -17,7 +17,7 @@ extern FILE *yyin;
 void yyerror(const char *s);
 
 //LANGUAGE BACKEND
-enum Type { Object, Integer, Float, String };
+enum Type { Object, Integer, Float, String, Function };
 typedef struct {
   Type type;
   any obj;
@@ -66,7 +66,7 @@ void decast(basicObject x) {
 %token DECLARATION QMARKS ATTRIBUTION DOT
 %token OPEN_CBRACKETS CLOSE_CBRACKETS COMMA OPEN_PAREN CLOSE_PAREN
 %token GREATER LESSER EQUALS N_EQUALS GR_EQUAL LE_EQUAL
-%token IF_S ELSE_S
+%token IF_S ELSE_S WHILE_S
 %token PRINT
 
 %token SUM MINUS MUL DIV
@@ -301,10 +301,19 @@ ifhead:
 
 elsehead:
 	ELSE_S { shouldExecute = !shouldExecute;} //Else roda se o if não rodar, vice-versa
+	;
 
 ifelse:
-	 ifhead codeblock { shouldExecute = 1;} //rola depois que eu passo pelo ifhead
-	 | ifhead codeblock elsehead codeblock { shouldExecute = 1;}; //rola depois que eu passo pelo ifhead
+	ifhead codeblock { shouldExecute = 1;} //rola depois que eu passo pelo ifhead
+	| ifhead codeblock elsehead codeblock { shouldExecute = 1;}; //rola depois que eu passo pelo ifhead
+	;
+
+whilehead:
+	WHILE_S OPEN_PAREN statement CLOSE_PAREN { if($3) shouldExecute = 1; else shouldExecute = 0; }
+	;
+
+while:
+
 
 printVar:
 	STRING {decast(cast(GLOBAL)[$1]);}

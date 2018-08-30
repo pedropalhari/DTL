@@ -31,6 +31,7 @@ using namespace std;
 "==" {return EQUALS;}
 "!=" {return N_EQUALS;}
 "if" {return IF_S;}
+"while" {return WHILE_S;}
 "else" {return ELSE_S;}
 "print" {return PRINT;}
 [ \t\n]           ;

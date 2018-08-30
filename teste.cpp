@@ -2,25 +2,55 @@
 #include <iostream>
 #include <typeinfo>
 #include <unordered_map>
-#define cast(X) (*any_cast<unordered_map<string, basicObject>*>(X.obj))
+#include <vector>
+#include <functional>
+#define cast(X) (*any_cast<unordered_map<string, basicObject> *>(X.obj))
 
 using namespace std;
 
-enum Type { Object, Integer, Float, String };
+enum Type
+{
+  Object,
+  Integer,
+  Float,
+  String
+};
 
-typedef struct {
+vector<function<void()>> runProgram;
+
+typedef struct
+{
   Type type;
   any obj;
 } basicObject;
 
-void decast(basicObject x) {
-  if (x.type == Integer) cout << any_cast<int>(x.obj) << endl;
+void decast(basicObject x)
+{
+  if (x.type == Integer)
+    cout << any_cast<int>(x.obj) << endl;
 }
 
-int main() {
-  basicObject GLOBAL;
+basicObject GLOBAL;
+
+void add(string x, int a, int b)
+{
+  basicObject aux;
+  aux.obj = a + b;
+  aux.type = Integer;
+  cast(GLOBAL)[x] = aux;
+}
+
+int main()
+{
   GLOBAL.type = Object;
   GLOBAL.obj = new unordered_map<string, basicObject>();
+
+  runProgram.push_back([]() { add("teste", 2, 3); });
+
+  for(auto i : runProgram)
+    i();
+
+  decast(cast(GLOBAL)["teste"]);
 
   basicObject obj1;
   obj1.type = Integer;
