@@ -2,3 +2,10 @@ var x;
 x = 8;
 
 variable = 1;
+
+var z;
+z = {var l, var h};
+
+z.l = 5; 
+
+z.h = {var x, var y};

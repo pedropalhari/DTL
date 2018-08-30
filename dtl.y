@@ -151,6 +151,7 @@ varAttribution:
 			cout << "VARIABLE ATTRIBUTION: (INTEGER) " << varName << " = ";
 			decast(cast(GLOBAL)[varName]);	 	
 		});				
+
 	}}
 	|	STRING ATTRIBUTION STRING_Q ENDL {
 		if(shouldExecute){
@@ -158,11 +159,14 @@ varAttribution:
 		auxObject.type = String;
 		string aux2 = $3;
 		auxObject.obj = aux2;
-		cast(GLOBAL)[$1] = auxObject;
+		
+		string varName = $1;
 
-		cout << "VARIABLE ATTRIBUTION: (STRING) " << $1 << " = ";
-
-		decast(cast(GLOBAL)[$1]);
+		runProgram.push_back([auxObject, varName]() { 
+			attr(cast(GLOBAL)[varName], auxObject); 
+			cout << "VARIABLE ATTRIBUTION: (STRING) " << varName << " = ";
+			decast(cast(GLOBAL)[varName]);	 	
+		});				
 	}}
 	|	STRING ATTRIBUTION object ENDL {
 		if(shouldExecute){
@@ -170,15 +174,19 @@ varAttribution:
 		auxObject.type = Object;
 		auxObject.obj = (unordered_map<string, basicObject> *) $3;
 		
-		cast(GLOBAL)[$1] = auxObject;
+		string varName = $1;
 
-		cout << "VARIABLE ATTRIBUTION: (OBJECT) " << $1 << " = {" << endl;
+		runProgram.push_back([auxObject, varName]() { 
+			attr(cast(GLOBAL)[varName], auxObject); 
 
-		for(auto x : cast(cast(GLOBAL)[$1])){
-			cout << "\t" << x.first << " = ";
-			decast(cast(cast(GLOBAL)[$1])[x.first]);
-		}
-		cout << "}" << endl;
+			cout << "VARIABLE ATTRIBUTION: (OBJECT) " << varName << " = {" << endl;
+
+			for(auto x : cast(cast(GLOBAL)[varName])){
+				cout << "\t" << x.first << " = ";
+				decast(x.second);
+			}
+			cout << "}" << endl;
+		});
 	}}
 	;
 
@@ -194,29 +202,32 @@ varAttributionCascaded:
 		auxObject.type = Integer;
 		auxObject.obj = $3;
 
-		string stringForPrintingLater;
-		basicObject auxDereference = GLOBAL;
-		for(auto x : auxForCascadedObjects){
-			if(x == auxForCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
-				cast(auxDereference)[x] = auxObject;
+		vector<string> localCascadedObjects = auxForCascadedObjects;
 
-				
-				stringForPrintingLater = x;				
-			} else { //Se não vai descendo recursivamente
-				auxDereference = cast(auxDereference)[x];
+		runProgram.push_back([auxObject, localCascadedObjects]() { 			
+			string stringForPrintingLater;
+			basicObject auxDereference = GLOBAL;
+			for(auto x : localCascadedObjects){
+				if(x == localCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
+					attr(cast(auxDereference)[x], auxObject); 
+					
+					stringForPrintingLater = x;				
+				} else { //Se não vai descendo recursivamente
+					auxDereference = cast(auxDereference)[x];
+				}
 			}
-		}
 
-		cout << "VARIABLE ATTRIBUTION: (INTEGER) ";
-		
-		for(auto x : auxForCascadedObjects) 
-			if(x == auxForCascadedObjects.front())
-				cout << x;
-			else cout << "." << x;
+			cout << "VARIABLE ATTRIBUTION: (INTEGER) ";
+			
+			for(auto x : localCascadedObjects) 
+				if(x == localCascadedObjects.front())
+					cout << x;
+				else cout << "." << x;
 
-		cout << " = ";
+			cout << " = ";
 
-		decast(cast(auxDereference)[stringForPrintingLater]);
+			decast(cast(auxDereference)[stringForPrintingLater]);
+		});
 
 		auxForCascadedObjects.clear();		
 	}}
@@ -227,18 +238,32 @@ varAttributionCascaded:
 		string aux2 = $3;
 		auxObject.obj = aux2;
 
-		string stringForPrintingLater;
-		basicObject auxDereference = GLOBAL;
-		for(auto x : auxForCascadedObjects){
-			if(x == auxForCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
-				cast(auxDereference)[x] = auxObject;
-				stringForPrintingLater = x;				
-			} else { //Se não vai descendo recursivamente
-				auxDereference = cast(auxDereference)[x];
-			}
-		}
+		vector<string> localCascadedObjects = auxForCascadedObjects;
 
-		decast(cast(auxDereference)[stringForPrintingLater]);
+		runProgram.push_back([auxObject, localCascadedObjects]() { 			
+			string stringForPrintingLater;
+			basicObject auxDereference = GLOBAL;
+			for(auto x : localCascadedObjects){
+				if(x == localCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
+					attr(cast(auxDereference)[x], auxObject); 
+					
+					stringForPrintingLater = x;				
+				} else { //Se não vai descendo recursivamente
+					auxDereference = cast(auxDereference)[x];
+				}
+			}
+
+			cout << "VARIABLE ATTRIBUTION: (STRING) ";
+			
+			for(auto x : localCascadedObjects) 
+				if(x == localCascadedObjects.front())
+					cout << x;
+				else cout << "." << x;
+
+			cout << " = ";
+
+			decast(cast(auxDereference)[stringForPrintingLater]);
+		});
 
 		auxForCascadedObjects.clear();
 	}}
@@ -248,18 +273,38 @@ varAttributionCascaded:
 		auxObject.type = Object;
 		auxObject.obj = (unordered_map<string, basicObject> *) $3;
 
-		string stringForPrintingLater;
-		basicObject auxDereference = GLOBAL;
-		for(auto x : auxForCascadedObjects){
-			if(x == auxForCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
-				cast(auxDereference)[x] = auxObject;
-				stringForPrintingLater = x;				
-			} else { //Se não vai descendo recursivamente
-				auxDereference = cast(auxDereference)[x];
-			}
-		}
+		vector<string> localCascadedObjects = auxForCascadedObjects;
 
-		decast(cast(auxDereference)[stringForPrintingLater]);
+		runProgram.push_back([auxObject, localCascadedObjects]() { 			
+			string stringForPrintingLater;
+			basicObject auxDereference = GLOBAL;
+			for(auto x : localCascadedObjects){
+				if(x == localCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
+					attr(cast(auxDereference)[x], auxObject); 
+					
+					stringForPrintingLater = x;				
+				} else { //Se não vai descendo recursivamente
+					auxDereference = cast(auxDereference)[x];
+				}
+			}
+
+			cout << "VARIABLE ATTRIBUTION: (OBJECT) ";
+			
+			for(auto x : localCascadedObjects) 
+				if(x == localCascadedObjects.front())
+					cout << x;
+				else cout << "." << x;
+
+			cout << " = {" << endl;
+
+			for(auto x : cast(cast(auxDereference)[stringForPrintingLater])){
+				cout << "\t" << x.first << " = ";
+				decast(x.second);
+			}
+			cout << "}" << endl;
+
+			//decast((cast(auxDereference))[stringForPrintingLater]);
+		});
 
 		auxForCascadedObjects.clear();		
 	}}
