@@ -30,4 +30,10 @@ using namespace std;
 "," {return COMMA;}
 "{" {return OPEN_CBRACKETS;}
 "}" {return CLOSE_CBRACKETS;}
+"(" {return OPEN_PAREN;}
+")" {return CLOSE_PAREN;}
+">" {return GREATER;}
+"<" {return LESSER;}
+"==" {return EQUALS;}
+"!=" {return N_EQUALS;}
 %%

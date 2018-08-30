@@ -56,10 +56,16 @@ extern int yydebug;
     OPEN_CBRACKETS = 266,
     CLOSE_CBRACKETS = 267,
     COMMA = 268,
-    SUM = 269,
-    MINUS = 270,
-    MUL = 271,
-    DIV = 272
+    OPEN_PAREN = 269,
+    CLOSE_PAREN = 270,
+    GREATER = 271,
+    LESSER = 272,
+    EQUALS = 273,
+    N_EQUALS = 274,
+    SUM = 275,
+    MINUS = 276,
+    MUL = 277,
+    DIV = 278
   };
 #endif
 
@@ -75,7 +81,7 @@ union YYSTYPE
 	char *sval;
 	void *oval; //Object
 
-#line 79 "dtl.tab.h" /* yacc.c:1909  */
+#line 85 "dtl.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

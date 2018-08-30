@@ -3,5 +3,5 @@ var variable;
 variable = {var ttt, var hhh};
 
 var quantosMetroDePicaOPedroTem;
-variable.ttt = 100;
+variable.ttt = (100 + 3) * 4;
 quantosMetroDePicaOPedroTem = variable.ttt + 300;

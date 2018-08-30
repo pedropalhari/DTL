@@ -50,6 +50,8 @@ void decast(basicObject x) {
 
 %type <oval> cascadedRef;
 
+%type <ival> statement;
+
 // Define the "terminal symbol" token types I'm going to use (in CAPS
 // by convention), and associate each with a field of the union:
 %token <ival> INT
@@ -58,12 +60,14 @@ void decast(basicObject x) {
 
 %token ENDL
 %token DECLARATION QMARKS ATTRIBUTION DOT
-%token OPEN_CBRACKETS CLOSE_CBRACKETS COMMA
+%token OPEN_CBRACKETS CLOSE_CBRACKETS COMMA OPEN_PAREN CLOSE_PAREN
+%token GREATER LESSER EQUALS N_EQUALS
 
 %token SUM MINUS MUL DIV
 %left SUM MINUS
 %left MUL DIV
 %left COMMA
+%left GREATER LESSER EQUALS N_EQUALS
 
 %%
 // This is the actual grammar that bison will parse, but for right now it's just
@@ -74,6 +78,7 @@ body:
 	| varDeclaration body
 	| varAttribution body
 	| varAttributionCascaded body
+	| statement body
 	;
 
 //TYPE RECOGNITION
@@ -258,8 +263,17 @@ express:
   | express MUL express {$$ = $1 * $3;}
   | express SUM express {$$ = $1 + $3;}
   | express MINUS express {$$ = $1 - $3;}
+	| OPEN_PAREN express CLOSE_PAREN {$$ = $2;}
   ;  
 
+//CONDITIONS
+statement:
+	express {$$ = $1; cout << $$ << endl;}
+	| statement GREATER statement {$$ = $1 > $3; cout << $$ << endl;}
+	| statement LESSER statement {$$ = $1 < $3; cout << $$ << endl;}
+	| statement EQUALS statement {$$ = $1 == $3; cout << $$ << endl;}
+	| statement N_EQUALS statement {$$ = $1 != $3; cout << $$ << endl;}
+	;
 %%
 
 int main(int, char *argv[]) {
