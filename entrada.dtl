@@ -10,6 +10,6 @@ z.l = 5;
 
 z.h = {var x, var y};
 
-x = "aaaa";
+x = (3 * 4) == (6 * 3);
 
 print(x, variable);

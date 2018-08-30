@@ -56,8 +56,6 @@ void attr(basicObject &var, basicObject attribute){
 
 %type <oval> cascadedRef;
 
-%type <ival> statement;
-
 %type <sval> printVar;
 
 // Define the "terminal symbol" token types I'm going to use (in CAPS
@@ -138,7 +136,7 @@ varDeclaration:
 	;
 
 varAttribution:
- STRING ATTRIBUTION statement ENDL {
+ STRING ATTRIBUTION express ENDL {
 	 if(shouldExecute){
 		basicObject auxObject;
 		auxObject.type = Integer;
@@ -196,7 +194,7 @@ cascadedRef:
 	;
 
 varAttributionCascaded:
- cascadedRef ATTRIBUTION statement ENDL {
+ cascadedRef ATTRIBUTION express ENDL {
 	 if(shouldExecute){
 		basicObject auxObject;
 		auxObject.type = Integer;
@@ -333,26 +331,20 @@ express:
   | express MUL express {$$ = $1 * $3;}
   | express SUM express {$$ = $1 + $3;}
   | express MINUS express {$$ = $1 - $3;}
+	| express GREATER express {$$ = $1 > $3;}
+	| express LESSER express {$$ = $1 < $3;}
+	| express GR_EQUAL express {$$ = $1 >= $3;}
+	| express LE_EQUAL express {$$ = $1 <= $3;}
+	| express EQUALS express {$$ = $1 == $3;}
+	| express N_EQUALS express {$$ = $1 != $3;}
 	| OPEN_PAREN express CLOSE_PAREN {$$ = $2;}
   ;  
-
-//CONDITIONS
-statement:
-	express {$$ = $1;}
-	| statement GREATER statement {$$ = $1 > $3;}
-	| statement LESSER statement {$$ = $1 < $3;}
-	| statement GR_EQUAL statement {$$ = $1 >= $3;}
-	| statement LE_EQUAL statement {$$ = $1 <= $3;}
-	| statement EQUALS statement {$$ = $1 == $3;}
-	| statement N_EQUALS statement {$$ = $1 != $3;}
-	| OPEN_PAREN statement CLOSE_PAREN {$$ = $2;}
-	;
 
 codeblock:
 	 OPEN_CBRACKETS body CLOSE_CBRACKETS;
 
 ifhead:
-	IF_S OPEN_PAREN statement CLOSE_PAREN { if($3) shouldExecute = 1; else shouldExecute = 0;};
+	IF_S OPEN_PAREN express CLOSE_PAREN { if($3) shouldExecute = 1; else shouldExecute = 0;};
 
 elsehead:
 	ELSE_S { shouldExecute = !shouldExecute;} //Else roda se o if não rodar, vice-versa
