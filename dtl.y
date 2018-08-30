@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <any>
+#include <functional>
 #define cast(X) (*any_cast<unordered_map<string, basicObject>*>(X.obj))
 
 using namespace std;
@@ -27,12 +28,15 @@ unordered_map<string, basicObject> *auxForObjectInitialization = new unordered_m
 vector<string> auxForCascadedObjects = vector<string>();
 
 int shouldExecute = 1;
-
 basicObject GLOBAL;
 
 void decast(basicObject x) {
   if (x.type == Integer) cout << any_cast<int>(x.obj) << endl;
 	if (x.type == String) cout << any_cast<string>(x.obj) << endl;
+}
+
+void attr(basicObject &var, basicObject attribute){
+	var = attribute;
 }
 
 %}
@@ -122,7 +126,7 @@ varDeclaration:
  DECLARATION STRING ENDL {
 		basicObject auxObject;
 		auxObject.type = Integer;
-		auxObject.obj = 3;
+		auxObject.obj = 0;
 		cast(GLOBAL)[$2] = auxObject;
 
 		cout << "VARIABLE DECLARATION: " << $2 << endl;
@@ -307,12 +311,6 @@ ifelse:
 	ifhead codeblock { shouldExecute = 1;} //rola depois que eu passo pelo ifhead
 	| ifhead codeblock elsehead codeblock { shouldExecute = 1;}; //rola depois que eu passo pelo ifhead
 	;
-
-whilehead:
-	WHILE_S OPEN_PAREN statement CLOSE_PAREN { if($3) shouldExecute = 1; else shouldExecute = 0; }
-	;
-
-while:
 
 
 printVar:

@@ -32,12 +32,9 @@ void decast(basicObject x)
 
 basicObject GLOBAL;
 
-void add(string x, int a, int b)
+void add(basicObject &x, basicObject value)
 {
-  basicObject aux;
-  aux.obj = a + b;
-  aux.type = Integer;
-  cast(GLOBAL)[x] = aux;
+  x = value;
 }
 
 int main()
@@ -45,16 +42,18 @@ int main()
   GLOBAL.type = Object;
   GLOBAL.obj = new unordered_map<string, basicObject>();
 
-  runProgram.push_back([]() { add("teste", 2, 3); });
+  basicObject obj1;
+  obj1.type = Integer;
+  obj1.obj = 3;
+
+  runProgram.push_back([obj1]() { add(cast(GLOBAL)["aa"], obj1); });
 
   for(auto i : runProgram)
     i();
 
-  decast(cast(GLOBAL)["teste"]);
+  decast(cast(GLOBAL)["aa"]);
 
-  basicObject obj1;
-  obj1.type = Integer;
-  obj1.obj = 3;
+  
 
   // a = 3;
   cast(GLOBAL)["a"] = obj1;

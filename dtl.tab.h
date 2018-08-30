@@ -67,11 +67,12 @@ extern int yydebug;
     LE_EQUAL = 277,
     IF_S = 278,
     ELSE_S = 279,
-    PRINT = 280,
-    SUM = 281,
-    MINUS = 282,
-    MUL = 283,
-    DIV = 284
+    WHILE_S = 280,
+    PRINT = 281,
+    SUM = 282,
+    MINUS = 283,
+    MUL = 284,
+    DIV = 285
   };
 #endif
 
@@ -80,14 +81,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 40 "dtl.y" /* yacc.c:1909  */
+#line 44 "dtl.y" /* yacc.c:1909  */
 
 	int ival;
 	float fval;
 	char *sval;
 	void *oval; //Object
 
-#line 91 "dtl.tab.h" /* yacc.c:1909  */
+#line 92 "dtl.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
