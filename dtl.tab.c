@@ -452,7 +452,7 @@ union yyalloc
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  44
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  94
+#define YYNSTATES  95
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -505,7 +505,7 @@ static const yytype_uint16 yyrline[] =
      112,   116,   127,   141,   156,   171,   194,   195,   199,   234,
      270,   315,   316,   320,   332,   333,   334,   335,   336,   341,
      342,   343,   344,   345,   346,   347,   348,   352,   355,   358,
-     362,   363,   368,   369,   373
+     362,   363,   368,   374,   383
 };
 #endif
 
@@ -558,10 +558,10 @@ static const yytype_int8 yypact[] =
       48,    53,    66,    78,    71,    73,    67,    44,   -31,   -31,
       86,   -31,   -12,    80,    84,    50,   -31,    79,   -31,    29,
      -31,    94,    17,    -5,    93,   -31,    85,    85,    85,    85,
-     -31,    78,    78,    78,    78,    78,    78,   -31,    96,   -31,
+     -31,    78,    78,    78,    78,    78,    78,   -31,    96,    91,
      -31,   -31,   -31,   -31,   -31,   -31,   -31,    66,   -31,   -31,
       85,     4,     4,   -31,   -31,   -31,   -31,   -31,   -31,   -31,
-     -31,   -31,   -31,    -5
+     -31,   -31,   -31,   -31,    -5
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -575,16 +575,16 @@ static const yytype_uint8 yydefact[] =
       22,     0,     0,     0,     0,    23,    29,     0,    16,    12,
        0,    42,     0,     0,     0,     0,    17,     0,    39,     0,
       14,     0,     0,    29,     0,    15,     0,     0,     0,     0,
-      13,     0,     0,     0,     0,     0,     0,    38,     0,    44,
+      13,     0,     0,     0,     0,     0,     0,    38,     0,     0,
       19,    20,    18,    37,    41,     9,    11,     0,    28,    36,
        0,    26,    27,    25,    24,    30,    31,    34,    35,    32,
-      33,    43,    10,     0
+      33,    43,    44,    10,     0
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -31,   -31,    30,    21,    95,   -31,   -31,     7,   -31,   -30,
+     -31,   -31,    30,    39,    95,   -31,   -31,     7,   -31,   -30,
      -17,    69,   -31,   -31,   -31,   -31,   -31
 };
 
@@ -605,16 +605,16 @@ static const yytype_uint8 yytable[] =
        9,     2,    56,    57,    58,    59,    81,    82,    83,    84,
       76,    77,     9,    58,    59,    18,     3,    20,    21,     4,
       24,    25,    27,    28,    85,    86,    87,    88,    89,    90,
-      93,    60,    38,    39,    41,    47,    46,    72,    48,    15,
+      94,    60,    38,    39,    41,    47,    46,    72,    48,    15,
       50,    61,    62,    63,    64,    65,    66,    61,    62,    63,
       64,    65,    66,    29,    51,    30,    31,    29,    55,    30,
       43,    29,    32,    30,    23,    33,    32,    70,    29,    33,
       30,    71,    73,    33,    56,    57,    58,    59,    92,    75,
       80,    91,    67,    61,    62,    63,    64,    65,    66,    79,
-      61,    62,    63,    64,    65,    66,     0,    44,    74
+      61,    62,    63,    64,    65,    66,    93,    44,    74
 };
 
-static const yytype_int8 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
       17,     5,    14,    33,    16,    22,    15,     0,    10,    11,
        0,    16,    10,    11,     7,     8,    33,    10,     5,    12,
@@ -625,9 +625,9 @@ static const yytype_int8 yycheck[] =
        7,    17,    18,    19,    20,    21,    22,    17,    18,    19,
       20,    21,    22,     3,     8,     5,     6,     3,     7,     5,
        6,     3,    12,     5,    11,    15,    12,     7,     3,    15,
-       5,     7,    13,    15,    27,    28,    29,    30,    77,     5,
+       5,     7,    13,    15,    27,    28,    29,    30,     7,     5,
       15,     5,    16,    17,    18,    19,    20,    21,    22,    16,
-      17,    18,    19,    20,    21,    22,    -1,    22,    49
+      17,    18,    19,    20,    21,    22,    77,    22,    49
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -643,7 +643,7 @@ static const yytype_uint8 yystos[] =
        7,    17,    18,    19,    20,    21,    22,    16,    14,    16,
        7,     7,     7,    13,    42,     5,    13,    14,    16,    16,
       15,    40,    40,    40,    40,    41,    41,    41,    41,    41,
-      41,     5,    34,    40
+      41,     5,     7,    34,    40
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -663,7 +663,7 @@ static const yytype_uint8 yyr2[] =
        3,     3,     3,     4,     4,     4,     3,     3,     4,     4,
        4,     1,     1,     1,     3,     3,     3,     3,     3,     1,
        3,     3,     3,     3,     3,     3,     3,     3,     4,     1,
-       2,     4,     1,     3,     4
+       2,     4,     1,     3,     5
 };
 
 
@@ -1727,24 +1727,28 @@ yyreduce:
 
   case 42:
 #line 368 "dtl.y" /* yacc.c:1646  */
-    {decast(cast(GLOBAL)[(yyvsp[0].sval)]);}
-#line 1732 "dtl.tab.c" /* yacc.c:1646  */
+    {
+		string varName = (yyvsp[0].sval);
+		runProgram.push_back([varName]() {
+			cout << varName << " = ";
+			decast(cast(GLOBAL)[varName]);
+		});}
+#line 1737 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 369 "dtl.y" /* yacc.c:1646  */
-    {decast(cast(GLOBAL)[(yyvsp[0].sval)]);}
-#line 1738 "dtl.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 44:
-#line 373 "dtl.y" /* yacc.c:1646  */
-    {}
-#line 1744 "dtl.tab.c" /* yacc.c:1646  */
-    break;
-
-
+#line 374 "dtl.y" /* yacc.c:1646  */
+    {
+		string varName = (yyvsp[0].sval);
+		runProgram.push_back([varName]() {
+			cout << varName << " = ";
+			decast(cast(GLOBAL)[varName]);
+		});}
 #line 1748 "dtl.tab.c" /* yacc.c:1646  */
+    break;
+
+
+#line 1752 "dtl.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1972,7 +1976,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 375 "dtl.y" /* yacc.c:1906  */
+#line 385 "dtl.y" /* yacc.c:1906  */
 
 
 int main(int, char *argv[]) {

@@ -365,12 +365,22 @@ ifelse:
 
 
 printVar:
-	STRING {decast(cast(GLOBAL)[$1]);}
-	| printVar COMMA STRING {decast(cast(GLOBAL)[$3]);}
+	STRING {
+		string varName = $1;
+		runProgram.push_back([varName]() {
+			cout << varName << " = ";
+			decast(cast(GLOBAL)[varName]);
+		});}
+	| printVar COMMA STRING {
+		string varName = $3;
+		runProgram.push_back([varName]() {
+			cout << varName << " = ";
+			decast(cast(GLOBAL)[varName]);
+		});}
 	;
 
 print:
-	PRINT OPEN_PAREN printVar CLOSE_PAREN {}
+	PRINT OPEN_PAREN printVar CLOSE_PAREN ENDL
 	;
 %%
 

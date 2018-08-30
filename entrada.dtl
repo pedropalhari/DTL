@@ -9,3 +9,7 @@ z = {var l, var h};
 z.l = 5; 
 
 z.h = {var x, var y};
+
+x = "aaaa";
+
+print(x, variable);
