@@ -43,6 +43,15 @@ void attr(basicObject &var, basicObject attribute){
 	var = attribute;
 }
 
+vector<function<void()>>::iterator globalProgramIterator;
+
+void checkIf(long ifHeader, long ifFoot, int statement){
+	if(statement)
+		globalProgramIterator = ifHeader;
+	else
+		globalProgramIterator = ifFoot;
+}
+
 %}
 
 %union {
@@ -60,6 +69,8 @@ void attr(basicObject &var, basicObject attribute){
 %type <oval> cascadedRef;
 
 %type <sval> printVar;
+
+%type <ival> ifhead
 
 // Define the "terminal symbol" token types I'm going to use (in CAPS
 // by convention), and associate each with a field of the union:
@@ -347,7 +358,7 @@ codeblock:
 	 OPEN_CBRACKETS body CLOSE_CBRACKETS;
 
 ifhead:
-	IF_S OPEN_PAREN express CLOSE_PAREN { ifHeadStack.push_back(runProgram.size()); };
+	IF_S OPEN_PAREN express CLOSE_PAREN { ifHeadStack.push_back(runProgram.size()); $$ = $3; };
 
 elsehead:
 	ELSE_S { shouldExecute = !shouldExecute;} //Else roda se o if não rodar, vice-versa
@@ -379,6 +390,8 @@ ifelse:
 		// AQUI EU COLOCO UMA FUNÇÃO NO RUNPROGRAM QUE FAZ O CHEQUE DOS IFS, ESSA FUNCAO FICA 
 		// NA POSICAO IFHEAD (INSERT), COMPARA O STATEMENT E CONTINUA OU PULA A EXECUÇÃO PRO
 		// IFFOOT
+		
+		//runProgram checkIf(ifHead, ifFoot, $1); falta dar o Insert e jogar no runprogram
 
 	} //rola depois que eu passo pelo ifhead
 	| ifhead codeblock elsehead codeblock { shouldExecute = 1;}; //rola depois que eu passo pelo ifhead
@@ -421,8 +434,8 @@ int main(int, char *argv[]) {
 	// Parse through the input:
 	yyparse(); 	
 
-	for(auto i : runProgram)
-		i();
+	for(globalProgramIterator = runProgram.begin(); globalProgramIterator != runProgram.end(); ++globalProgramIterator)
+		(*globalProgramIterator)();
 }
 
 void yyerror(const char *s) {
