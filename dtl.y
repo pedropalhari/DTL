@@ -54,6 +54,8 @@ void decast(basicObject x) {
 
 %type <ival> statement;
 
+%type <sval> printVar;
+
 // Define the "terminal symbol" token types I'm going to use (in CAPS
 // by convention), and associate each with a field of the union:
 %token <ival> INT
@@ -65,6 +67,7 @@ void decast(basicObject x) {
 %token OPEN_CBRACKETS CLOSE_CBRACKETS COMMA OPEN_PAREN CLOSE_PAREN
 %token GREATER LESSER EQUALS N_EQUALS
 %token IF_S ELSE_S
+%token PRINT
 
 %token SUM MINUS MUL DIV
 %left SUM MINUS
@@ -82,6 +85,7 @@ body:
 	| varAttribution body
 	| varAttributionCascaded body
 	| ifelse body
+	| print body
 	;
 
 //TYPE RECOGNITION
@@ -128,18 +132,19 @@ varDeclaration:
 
 varAttribution:
  STRING ATTRIBUTION statement ENDL {
+	 if(shouldExecute){
 		basicObject auxObject;
 		auxObject.type = Integer;
 		auxObject.obj = $3;
 
-		if(shouldExecute)
 		cast(GLOBAL)[$1] = auxObject;
 
 		cout << "VARIABLE ATTRIBUTION: (INTEGER) " << $1 << " = ";
 
 		decast(cast(GLOBAL)[$1]);	 
-	}
+	}}
 	|	STRING ATTRIBUTION string ENDL {
+		if(shouldExecute){
 		basicObject auxObject;
 		auxObject.type = String;
 		string aux2 = $3;
@@ -149,13 +154,13 @@ varAttribution:
 		cout << "VARIABLE ATTRIBUTION: (STRING) " << $1 << " = ";
 
 		decast(cast(GLOBAL)[$1]);
-	}
+	}}
 	|	STRING ATTRIBUTION object ENDL {
+		if(shouldExecute){
 		basicObject auxObject;
 		auxObject.type = Object;
 		auxObject.obj = (unordered_map<string, basicObject> *) $3;
 		
-		if(shouldExecute)
 		cast(GLOBAL)[$1] = auxObject;
 
 		cout << "VARIABLE ATTRIBUTION: (OBJECT) " << $1 << " = {" << endl;
@@ -165,7 +170,7 @@ varAttribution:
 			decast(cast(cast(GLOBAL)[$1])[x.first]);
 		}
 		cout << "}" << endl;
-	}
+	}}
 	;
 
 cascadedRef:
@@ -175,6 +180,7 @@ cascadedRef:
 
 varAttributionCascaded:
  cascadedRef ATTRIBUTION statement ENDL {
+	 if(shouldExecute){
 		basicObject auxObject;
 		auxObject.type = Integer;
 		auxObject.obj = $3;
@@ -184,6 +190,8 @@ varAttributionCascaded:
 		for(auto x : auxForCascadedObjects){
 			if(x == auxForCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
 				cast(auxDereference)[x] = auxObject;
+
+				
 				stringForPrintingLater = x;				
 			} else { //Se não vai descendo recursivamente
 				auxDereference = cast(auxDereference)[x];
@@ -202,8 +210,9 @@ varAttributionCascaded:
 		decast(cast(auxDereference)[stringForPrintingLater]);
 
 		auxForCascadedObjects.clear();		
-	}
+	}}
 	| cascadedRef ATTRIBUTION string ENDL {
+		if(shouldExecute){
 		basicObject auxObject;
 		auxObject.type = String;
 		string aux2 = $3;
@@ -223,8 +232,9 @@ varAttributionCascaded:
 		decast(cast(auxDereference)[stringForPrintingLater]);
 
 		auxForCascadedObjects.clear();
-	}
+	}}
 	| cascadedRef ATTRIBUTION object ENDL {
+		if(shouldExecute){
 		basicObject auxObject;
 		auxObject.type = Object;
 		auxObject.obj = (unordered_map<string, basicObject> *) $3;
@@ -243,7 +253,7 @@ varAttributionCascaded:
 		decast(cast(auxDereference)[stringForPrintingLater]);
 
 		auxForCascadedObjects.clear();		
-	}
+	}}
 	;
 
 //CALCULATOR
@@ -275,11 +285,11 @@ express:
 
 //CONDITIONS
 statement:
-	express {$$ = $1; cout << $$ << endl;}
-	| statement GREATER statement {$$ = $1 > $3; cout << $$ << endl;}
-	| statement LESSER statement {$$ = $1 < $3; cout << $$ << endl;}
-	| statement EQUALS statement {$$ = $1 == $3; cout << $$ << endl;}
-	| statement N_EQUALS statement {$$ = $1 != $3; cout << $$ << endl;}
+	express {$$ = $1;}
+	| statement GREATER statement {$$ = $1 > $3;}
+	| statement LESSER statement {$$ = $1 < $3;}
+	| statement EQUALS statement {$$ = $1 == $3;}
+	| statement N_EQUALS statement {$$ = $1 != $3;}
 	| OPEN_PAREN statement CLOSE_PAREN {$$ = $2;}
 	;
 
@@ -287,10 +297,20 @@ codeblock:
 	 OPEN_CBRACKETS body CLOSE_CBRACKETS;
 
 ifhead:
-	IF_S OPEN_PAREN statement CLOSE_PAREN {cout << "shouldNot" << endl; shouldExecute = 0;};
+	IF_S OPEN_PAREN statement CLOSE_PAREN { if($3) shouldExecute = 1; else shouldExecute = 0;};
+
+elsehead:
+	ELSE_S { shouldExecute = !shouldExecute;}
 
 ifelse:
-	 ifhead codeblock { shouldExecute = 1; cout << "should";}
+	 ifhead codeblock { shouldExecute = 1;} //rola depois que eu passo pelo ifhead
+	 | ifhead codeblock elsehead codeblock { shouldExecute = 1;}; //rola depois que eu passo pelo ifhead
+
+printVar:
+	STRING;
+
+print:
+	PRINT OPEN_PAREN printVar CLOSE_PAREN {decast(cast(GLOBAL)[$3]);}
 
 %%
 

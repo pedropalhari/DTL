@@ -64,10 +64,11 @@ extern int yydebug;
     N_EQUALS = 274,
     IF_S = 275,
     ELSE_S = 276,
-    SUM = 277,
-    MINUS = 278,
-    MUL = 279,
-    DIV = 280
+    PRINT = 277,
+    SUM = 278,
+    MINUS = 279,
+    MUL = 280,
+    DIV = 281
   };
 #endif
 
@@ -83,7 +84,7 @@ union YYSTYPE
 	char *sval;
 	void *oval; //Object
 
-#line 87 "dtl.tab.h" /* yacc.c:1909  */
+#line 88 "dtl.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

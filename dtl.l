@@ -30,6 +30,7 @@ using namespace std;
 "!=" {return N_EQUALS;}
 "if" {return IF_S;}
 "else" {return ELSE_S;}
+"print" {return PRINT;}
 [ \t\n]           ;
 [0-9]+\.[0-9]+    { yylval.fval = atof(yytext); return FLOAT; }
 [0-9]+            { yylval.ival = atoi(yytext); return INT; }
