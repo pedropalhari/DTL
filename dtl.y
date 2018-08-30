@@ -29,6 +29,7 @@ vector<string> auxForCascadedObjects = vector<string>();
 
 int shouldExecute = 1;
 basicObject GLOBAL;
+vector<function<void()>> runProgram;
 
 void decast(basicObject x) {
   if (x.type == Integer) cout << any_cast<int>(x.obj) << endl;
@@ -127,9 +128,12 @@ varDeclaration:
 		basicObject auxObject;
 		auxObject.type = Integer;
 		auxObject.obj = 0;
-		cast(GLOBAL)[$2] = auxObject;
+		string varName = $2;
 
-		cout << "VARIABLE DECLARATION: " << $2 << endl;
+		runProgram.push_back([auxObject, varName]() { 
+			attr(cast(GLOBAL)[varName], auxObject); 
+			cout << "VARIABLE DECLARATION: " << varName << endl;	
+		});		
   }
 	;
 
@@ -140,11 +144,13 @@ varAttribution:
 		auxObject.type = Integer;
 		auxObject.obj = $3;
 
-		cast(GLOBAL)[$1] = auxObject;
+		string varName = $1;
 
-		cout << "VARIABLE ATTRIBUTION: (INTEGER) " << $1 << " = ";
-
-		decast(cast(GLOBAL)[$1]);	 
+		runProgram.push_back([auxObject, varName]() { 
+			attr(cast(GLOBAL)[varName], auxObject); 
+			cout << "VARIABLE ATTRIBUTION: (INTEGER) " << varName << " = ";
+			decast(cast(GLOBAL)[varName]);	 	
+		});				
 	}}
 	|	STRING ATTRIBUTION STRING_Q ENDL {
 		if(shouldExecute){
@@ -338,6 +344,9 @@ int main(int, char *argv[]) {
 	
 	// Parse through the input:
 	yyparse(); 	
+
+	for(auto i : runProgram)
+		i();
 }
 
 void yyerror(const char *s) {
