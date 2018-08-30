@@ -44,7 +44,6 @@ void decast(basicObject x) {
 	void *oval; //Object
 }
 
-%type <sval> string;
 %type<ival> express
 
 %type <oval> object;
@@ -61,11 +60,12 @@ void decast(basicObject x) {
 %token <ival> INT
 %token <fval> FLOAT
 %token <sval> STRING
+%token <sval> STRING_Q
 
 %token ENDL
 %token DECLARATION QMARKS ATTRIBUTION DOT
 %token OPEN_CBRACKETS CLOSE_CBRACKETS COMMA OPEN_PAREN CLOSE_PAREN
-%token GREATER LESSER EQUALS N_EQUALS
+%token GREATER LESSER EQUALS N_EQUALS GR_EQUAL LE_EQUAL
 %token IF_S ELSE_S
 %token PRINT
 
@@ -73,12 +73,15 @@ void decast(basicObject x) {
 %left SUM MINUS
 %left MUL DIV
 %left COMMA
-%left GREATER LESSER EQUALS N_EQUALS 
+%left GREATER LESSER EQUALS N_EQUALS GR_EQUAL LE_EQUAL
 
 %%
 // This is the actual grammar that bison will parse, but for right now it's just
 // something silly to echo to the screen what bison gets from flex.  We'll
 // make a real one shortly:
+
+wholeProgram:
+	body {cout << "FINISHED!" << endl;}
 
 body:
 	| varDeclaration body
@@ -87,10 +90,6 @@ body:
 	| ifelse body
 	| print body
 	;
-
-//TYPE RECOGNITION
-string:
-	QMARKS STRING QMARKS {$$ = $2;};
 
 //O QUE ACONTECE AQUI É QUE EU USO UM OBJETO GLOBAL PRA 
 //GERAR UM UNORDERED_MAP QUE ALOCA AS PROPRIEDADES DE UM OBJETO
@@ -143,7 +142,7 @@ varAttribution:
 
 		decast(cast(GLOBAL)[$1]);	 
 	}}
-	|	STRING ATTRIBUTION string ENDL {
+	|	STRING ATTRIBUTION STRING_Q ENDL {
 		if(shouldExecute){
 		basicObject auxObject;
 		auxObject.type = String;
@@ -211,7 +210,7 @@ varAttributionCascaded:
 
 		auxForCascadedObjects.clear();		
 	}}
-	| cascadedRef ATTRIBUTION string ENDL {
+	| cascadedRef ATTRIBUTION STRING_Q ENDL {
 		if(shouldExecute){
 		basicObject auxObject;
 		auxObject.type = String;
@@ -261,7 +260,6 @@ express:
   INT {$$ = $1;} 
 	| STRING {
 			any aux = (cast(GLOBAL)[$1]);
-			cout << $1 << aux.type().name();
 			$$ = any_cast<int> ((cast(GLOBAL)[$1]).obj);
 		}
 	| cascadedRef {
@@ -288,6 +286,8 @@ statement:
 	express {$$ = $1;}
 	| statement GREATER statement {$$ = $1 > $3;}
 	| statement LESSER statement {$$ = $1 < $3;}
+	| statement GR_EQUAL statement {$$ = $1 >= $3;}
+	| statement LE_EQUAL statement {$$ = $1 <= $3;}
 	| statement EQUALS statement {$$ = $1 == $3;}
 	| statement N_EQUALS statement {$$ = $1 != $3;}
 	| OPEN_PAREN statement CLOSE_PAREN {$$ = $2;}
@@ -300,18 +300,20 @@ ifhead:
 	IF_S OPEN_PAREN statement CLOSE_PAREN { if($3) shouldExecute = 1; else shouldExecute = 0;};
 
 elsehead:
-	ELSE_S { shouldExecute = !shouldExecute;}
+	ELSE_S { shouldExecute = !shouldExecute;} //Else roda se o if não rodar, vice-versa
 
 ifelse:
 	 ifhead codeblock { shouldExecute = 1;} //rola depois que eu passo pelo ifhead
 	 | ifhead codeblock elsehead codeblock { shouldExecute = 1;}; //rola depois que eu passo pelo ifhead
 
 printVar:
-	STRING;
+	STRING {decast(cast(GLOBAL)[$1]);}
+	| printVar COMMA STRING {decast(cast(GLOBAL)[$3]);}
+	;
 
 print:
-	PRINT OPEN_PAREN printVar CLOSE_PAREN {decast(cast(GLOBAL)[$3]);}
-
+	PRINT OPEN_PAREN printVar CLOSE_PAREN {}
+	;
 %%
 
 int main(int, char *argv[]) {

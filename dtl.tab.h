@@ -48,27 +48,30 @@ extern int yydebug;
     INT = 258,
     FLOAT = 259,
     STRING = 260,
-    ENDL = 261,
-    DECLARATION = 262,
-    QMARKS = 263,
-    ATTRIBUTION = 264,
-    DOT = 265,
-    OPEN_CBRACKETS = 266,
-    CLOSE_CBRACKETS = 267,
-    COMMA = 268,
-    OPEN_PAREN = 269,
-    CLOSE_PAREN = 270,
-    GREATER = 271,
-    LESSER = 272,
-    EQUALS = 273,
-    N_EQUALS = 274,
-    IF_S = 275,
-    ELSE_S = 276,
-    PRINT = 277,
-    SUM = 278,
-    MINUS = 279,
-    MUL = 280,
-    DIV = 281
+    STRING_Q = 261,
+    ENDL = 262,
+    DECLARATION = 263,
+    QMARKS = 264,
+    ATTRIBUTION = 265,
+    DOT = 266,
+    OPEN_CBRACKETS = 267,
+    CLOSE_CBRACKETS = 268,
+    COMMA = 269,
+    OPEN_PAREN = 270,
+    CLOSE_PAREN = 271,
+    GREATER = 272,
+    LESSER = 273,
+    EQUALS = 274,
+    N_EQUALS = 275,
+    GR_EQUAL = 276,
+    LE_EQUAL = 277,
+    IF_S = 278,
+    ELSE_S = 279,
+    PRINT = 280,
+    SUM = 281,
+    MINUS = 282,
+    MUL = 283,
+    DIV = 284
   };
 #endif
 
@@ -84,7 +87,7 @@ union YYSTYPE
 	char *sval;
 	void *oval; //Object
 
-#line 88 "dtl.tab.h" /* yacc.c:1909  */
+#line 91 "dtl.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -8,12 +8,18 @@ variableTwo = (variable.ttt + 300) + 10;
 
 print(variableTwo)
 
+var x;
+x = 8;
+
 variable = 1;
-if(3 > 5){
+if(x > 5){
 	variable = 3;
 	variable = 4;
 }else {
 	variable = 12;
 }
 
-print(variable)
+var z;
+z = "Printando variavel";
+
+print(z, variable, x)

@@ -26,6 +26,8 @@ using namespace std;
 ")" {return CLOSE_PAREN;}
 ">" {return GREATER;}
 "<" {return LESSER;}
+">=" {return GR_EQUAL;}
+"<=" {return LE_EQUAL;}
 "==" {return EQUALS;}
 "!=" {return N_EQUALS;}
 "if" {return IF_S;}
@@ -38,5 +40,10 @@ using namespace std;
 	// We have to strdup because we can't rely on yytext not changing underneath us:
 	yylval.sval = strdup(yytext);
 	return STRING;
+}
+\"(\\.|[^"\\])*\" {
+	// We have to strdup because we can't rely on yytext not changing underneath us:
+	yylval.sval = strdup(yytext);
+	return STRING_Q;
 }
 %%
