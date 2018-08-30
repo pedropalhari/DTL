@@ -31,6 +31,9 @@ int shouldExecute = 1;
 basicObject GLOBAL;
 vector<function<void()>> runProgram;
 
+vector<long> ifHeadStack;
+vector<long> ifFootStack;
+
 void decast(basicObject x) {
   if (x.type == Integer) cout << any_cast<int>(x.obj) << endl;
 	if (x.type == String) cout << any_cast<string>(x.obj) << endl;
@@ -344,14 +347,40 @@ codeblock:
 	 OPEN_CBRACKETS body CLOSE_CBRACKETS;
 
 ifhead:
-	IF_S OPEN_PAREN express CLOSE_PAREN { if($3) shouldExecute = 1; else shouldExecute = 0;};
+	IF_S OPEN_PAREN express CLOSE_PAREN { ifHeadStack.push_back(runProgram.size()); };
 
 elsehead:
 	ELSE_S { shouldExecute = !shouldExecute;} //Else roda se o if não rodar, vice-versa
 	;
 
 ifelse:
-	ifhead codeblock { shouldExecute = 1;} //rola depois que eu passo pelo ifhead
+	ifhead codeblock { 
+		ifFootStack.push_back(runProgram.size()); 
+
+		cout << "IF HEAD STACK: ";
+		for(auto x : ifHeadStack)
+			cout << x << " ";
+		cout << endl;
+
+		cout << "IF FOOT STACK: ";
+		for(auto x : ifFootStack)
+			cout << x << " ";
+		cout << endl;
+
+		cout << "FECHANDO UM IF:";
+		int ifHead = ifHeadStack.back();
+		int ifFoot = ifFootStack.back();
+
+		ifHeadStack.pop_back();
+		ifFootStack.pop_back();
+
+		cout << ifHead << " " << ifFoot << endl;
+
+		// AQUI EU COLOCO UMA FUNÇÃO NO RUNPROGRAM QUE FAZ O CHEQUE DOS IFS, ESSA FUNCAO FICA 
+		// NA POSICAO IFHEAD (INSERT), COMPARA O STATEMENT E CONTINUA OU PULA A EXECUÇÃO PRO
+		// IFFOOT
+
+	} //rola depois que eu passo pelo ifhead
 	| ifhead codeblock elsehead codeblock { shouldExecute = 1;}; //rola depois que eu passo pelo ifhead
 	;
 
