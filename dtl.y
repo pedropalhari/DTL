@@ -37,7 +37,7 @@ vector<function<void()>>::iterator globalProgramIterator;
 vector<long> ifHeadStack;
 vector<long> ifFootStack;
 
-//Uma stack para resolver expressões, como uma calculadora
+//Uma stack para resolver expressões, como uma calculadora. Também resolve > < == etc
 vector<int> globalExpressionStack;
 
 void decast(basicObject x) {
@@ -379,7 +379,17 @@ express:
 					globalExpressionStack.push_back(firstExpress * secondExpress);
 				}); 
 		}
-  | express SUM express {$$ = $1 + $3;}
+  | express SUM express {
+			//$$ = $1 + $3;
+			runProgram.push_back([](){
+					cout << "found div " << globalExpressionStack.size() << endl;
+					int secondExpress = globalExpressionStack.back();
+					globalExpressionStack.pop_back();
+					int firstExpress = globalExpressionStack.back();
+					globalExpressionStack.pop_back();
+					globalExpressionStack.push_back(firstExpress + secondExpress);
+				}); 	
+		}
   | express MINUS express {$$ = $1 - $3;}
 	| express GREATER express {$$ = $1 > $3;}
 	| express LESSER express {$$ = $1 < $3;}
