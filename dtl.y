@@ -34,6 +34,8 @@ vector<function<void()>> runProgram;
 vector<long> ifHeadStack;
 vector<long> ifFootStack;
 
+vector<function<void()>>::iterator globalProgramIterator;
+
 void decast(basicObject x) {
   if (x.type == Integer) cout << any_cast<int>(x.obj) << endl;
 	if (x.type == String) cout << any_cast<string>(x.obj) << endl;
@@ -42,6 +44,14 @@ void decast(basicObject x) {
 void attr(basicObject &var, basicObject attribute){
 	var = attribute;
 }
+
+void checkIf(int ifHead, int ifFoot, int condition){
+	cout << "TESTANDO IF: " << ifHead << " " << ifFoot << " " << condition;
+	if(condition) return;
+	else globalProgramIterator += ifFoot - ifHead; //Pula o corpo do if
+}
+
+
 
 %}
 
@@ -60,6 +70,8 @@ void attr(basicObject &var, basicObject attribute){
 %type <oval> cascadedRef;
 
 %type <sval> printVar;
+
+%type <ival> ifhead
 
 // Define the "terminal symbol" token types I'm going to use (in CAPS
 // by convention), and associate each with a field of the union:
@@ -140,7 +152,7 @@ varDeclaration:
 
 varAttribution:
  STRING ATTRIBUTION express ENDL {
-	 if(shouldExecute){
+	 
 		basicObject auxObject;
 		auxObject.type = Integer;
 		auxObject.obj = $3;
@@ -153,9 +165,9 @@ varAttribution:
 			decast(cast(GLOBAL)[varName]);	 	
 		});				
 
-	}}
+	}
 	|	STRING ATTRIBUTION STRING_Q ENDL {
-		if(shouldExecute){
+		
 		basicObject auxObject;
 		auxObject.type = String;
 		string aux2 = $3;
@@ -168,9 +180,9 @@ varAttribution:
 			cout << "VARIABLE ATTRIBUTION: (STRING) " << varName << " = ";
 			decast(cast(GLOBAL)[varName]);	 	
 		});				
-	}}
+	}
 	|	STRING ATTRIBUTION object ENDL {
-		if(shouldExecute){
+		
 		basicObject auxObject;
 		auxObject.type = Object;
 		auxObject.obj = (unordered_map<string, basicObject> *) $3;
@@ -188,7 +200,7 @@ varAttribution:
 			}
 			cout << "}" << endl;
 		});
-	}}
+	}
 	;
 
 cascadedRef:
@@ -198,7 +210,7 @@ cascadedRef:
 
 varAttributionCascaded:
  cascadedRef ATTRIBUTION express ENDL {
-	 if(shouldExecute){
+	 
 		basicObject auxObject;
 		auxObject.type = Integer;
 		auxObject.obj = $3;
@@ -231,9 +243,9 @@ varAttributionCascaded:
 		});
 
 		auxForCascadedObjects.clear();		
-	}}
+	}
 	| cascadedRef ATTRIBUTION STRING_Q ENDL {
-		if(shouldExecute){
+		
 		basicObject auxObject;
 		auxObject.type = String;
 		string aux2 = $3;
@@ -267,9 +279,9 @@ varAttributionCascaded:
 		});
 
 		auxForCascadedObjects.clear();
-	}}
+	}
 	| cascadedRef ATTRIBUTION object ENDL {
-		if(shouldExecute){
+		
 		basicObject auxObject;
 		auxObject.type = Object;
 		auxObject.obj = (unordered_map<string, basicObject> *) $3;
@@ -308,7 +320,7 @@ varAttributionCascaded:
 		});
 
 		auxForCascadedObjects.clear();		
-	}}
+	}
 	;
 
 //CALCULATOR
@@ -347,7 +359,10 @@ codeblock:
 	 OPEN_CBRACKETS body CLOSE_CBRACKETS;
 
 ifhead:
-	IF_S OPEN_PAREN express CLOSE_PAREN { ifHeadStack.push_back(runProgram.size()); };
+	IF_S OPEN_PAREN express CLOSE_PAREN { //Reconhece esse padrão quando começa o if
+		ifHeadStack.push_back(runProgram.size());
+		$$ = $3; 
+	};
 
 elsehead:
 	ELSE_S { shouldExecute = !shouldExecute;} //Else roda se o if não rodar, vice-versa
@@ -355,6 +370,7 @@ elsehead:
 
 ifelse:
 	ifhead codeblock { 
+		//Reconhece esse padrão quando acaba o if
 		ifFootStack.push_back(runProgram.size()); 
 
 		cout << "IF HEAD STACK: ";
@@ -379,6 +395,14 @@ ifelse:
 		// AQUI EU COLOCO UMA FUNÇÃO NO RUNPROGRAM QUE FAZ O CHEQUE DOS IFS, ESSA FUNCAO FICA 
 		// NA POSICAO IFHEAD (INSERT), COMPARA O STATEMENT E CONTINUA OU PULA A EXECUÇÃO PRO
 		// IFFOOT
+		
+		//runProgram checkIf(ifHead, ifFoot, $1); falta dar o Insert e jogar no runprogram
+		int condition = $1;
+		vector<function<void()>>::iterator ifHeadPositionIterator = runProgram.begin() + ifHead;
+		runProgram.insert(ifHeadPositionIterator, [ifHead, ifFoot, condition]() { 
+			checkIf(ifHead, ifFoot, condition); 
+			cout << "CHECKING IF: " << condition << endl;	
+		});	
 
 	} //rola depois que eu passo pelo ifhead
 	| ifhead codeblock elsehead codeblock { shouldExecute = 1;}; //rola depois que eu passo pelo ifhead
@@ -421,8 +445,11 @@ int main(int, char *argv[]) {
 	// Parse through the input:
 	yyparse(); 	
 
-	for(auto i : runProgram)
-		i();
+	int i = 0;
+	for(globalProgramIterator = runProgram.begin(); globalProgramIterator != runProgram.end(); ++globalProgramIterator){
+		//cout << i++ << endl;
+		(*globalProgramIterator)();
+	}
 }
 
 void yyerror(const char *s) {

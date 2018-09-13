@@ -1,0 +1,3 @@
+* Terminar Ifs
+* Implementar Else
+* Implementar expressões (+. -) como expressões lambda
