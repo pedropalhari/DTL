@@ -29,12 +29,16 @@ vector<string> auxForCascadedObjects = vector<string>();
 
 int shouldExecute = 1;
 basicObject GLOBAL;
+//Vetor de funções lambda de instruções pro programa
 vector<function<void()>> runProgram;
+vector<function<void()>>::iterator globalProgramIterator;
 
+//Stack para identificar blocos de função if
 vector<long> ifHeadStack;
 vector<long> ifFootStack;
 
-vector<function<void()>>::iterator globalProgramIterator;
+//Uma stack para resolver expressões, como uma calculadora
+vector<int> globalExpressionStack;
 
 void decast(basicObject x) {
   if (x.type == Integer) cout << any_cast<int>(x.obj) << endl;
@@ -152,14 +156,14 @@ varDeclaration:
 
 varAttribution:
  STRING ATTRIBUTION express ENDL {
-	 
-		basicObject auxObject;
-		auxObject.type = Integer;
-		auxObject.obj = $3;
-
 		string varName = $1;
 
-		runProgram.push_back([auxObject, varName]() { 
+		runProgram.push_back([varName]() { 
+			basicObject auxObject;
+			auxObject.type = Integer;
+			auxObject.obj = globalExpressionStack.back();
+			globalExpressionStack.pop_back();
+
 			attr(cast(GLOBAL)[varName], auxObject); 
 			cout << "VARIABLE ATTRIBUTION: (INTEGER) " << varName << " = ";
 			decast(cast(GLOBAL)[varName]);	 	
@@ -325,7 +329,17 @@ varAttributionCascaded:
 
 //CALCULATOR
 express: 
-  INT {$$ = $1;} 
+  INT {
+		//$$ = $1;
+
+			int numberFound = $1;
+
+			runProgram.push_back([numberFound]() {
+				cout << "found int " << globalExpressionStack.size() << endl;
+				globalExpressionStack.push_back(numberFound);
+			});
+			
+		} 
 	| STRING {
 			any aux = (cast(GLOBAL)[$1]);
 			$$ = any_cast<int> ((cast(GLOBAL)[$1]).obj);
@@ -342,8 +356,29 @@ express:
 
 		auxForCascadedObjects.clear();
 	}
-  | express DIV express {$$ = $1 / $3;}
-  | express MUL express {$$ = $1 * $3;}
+  | express DIV express {
+				//$$ = $1 / $3;
+				
+				runProgram.push_back([](){
+					cout << "found div " << globalExpressionStack.size() << endl;
+					int secondExpress = globalExpressionStack.back();
+					globalExpressionStack.pop_back();
+					int firstExpress = globalExpressionStack.back();
+					globalExpressionStack.pop_back();
+					globalExpressionStack.push_back(firstExpress / secondExpress);
+				}); 
+			}
+  | express MUL express {
+			//$$ = $1 * $3;
+			runProgram.push_back([](){
+					cout << "found div " << globalExpressionStack.size() << endl;
+					int secondExpress = globalExpressionStack.back();
+					globalExpressionStack.pop_back();
+					int firstExpress = globalExpressionStack.back();
+					globalExpressionStack.pop_back();
+					globalExpressionStack.push_back(firstExpress * secondExpress);
+				}); 
+		}
   | express SUM express {$$ = $1 + $3;}
   | express MINUS express {$$ = $1 - $3;}
 	| express GREATER express {$$ = $1 > $3;}
@@ -449,6 +484,10 @@ int main(int, char *argv[]) {
 	for(globalProgramIterator = runProgram.begin(); globalProgramIterator != runProgram.end(); ++globalProgramIterator){
 		//cout << i++ << endl;
 		(*globalProgramIterator)();
+
+		for(auto i : globalExpressionStack)
+			cout << i << ", ";
+		cout << endl;
 	}
 }
 
