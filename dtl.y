@@ -59,6 +59,8 @@ void checkIf(int ifHead, int ifFoot, int condition){
 }
 
 // 0 = +, 1 = -, 2 = *, 3 = /
+// 4 = >, 5 = <, 6 = >=, 7 = <=
+// 8 = ==, 9 = !=
 void doOperationWithExpression(int operationType){
 	cout << "found sum " << globalExpressionStack.size() << endl;
 	any secondExpress = globalExpressionStack.back();
@@ -80,24 +82,51 @@ void doOperationWithExpression(int operationType){
 		secondExpress = ((cast(GLOBAL)[any_cast<string>(secondExpress)]).obj);
 	}
 
+	int result;
 
 	switch(operationType){
 		case 0:
-			globalExpressionStack.push_back(any_cast<int>(firstExpress) + any_cast<int>(secondExpress));
+			result = any_cast<int>(firstExpress) + any_cast<int>(secondExpress);
 			break;
 		
 		case 1:
-			globalExpressionStack.push_back(any_cast<int>(firstExpress) - any_cast<int>(secondExpress));
+			result = any_cast<int>(firstExpress) - any_cast<int>(secondExpress);
 			break;
 
 		case 2:
-			globalExpressionStack.push_back(any_cast<int>(firstExpress) * any_cast<int>(secondExpress));
+			result = any_cast<int>(firstExpress) * any_cast<int>(secondExpress);
 			break;
 
 		case 3:
-			globalExpressionStack.push_back(any_cast<int>(firstExpress) / any_cast<int>(secondExpress));
+			result = any_cast<int>(firstExpress) / any_cast<int>(secondExpress);
 			break;
-	}	
+
+		case 4:
+			result = any_cast<int>(firstExpress) > any_cast<int>(secondExpress);
+			break;
+
+		case 5:
+			result = any_cast<int>(firstExpress) < any_cast<int>(secondExpress);
+			break;
+
+		case 6:
+			result = any_cast<int>(firstExpress) >= any_cast<int>(secondExpress);
+			break;
+
+		case 7:
+			result = any_cast<int>(firstExpress) <= any_cast<int>(secondExpress);
+			break;
+
+		case 8:
+			result = any_cast<int>(firstExpress) == any_cast<int>(secondExpress);
+			break;
+
+		case 9:
+			result = any_cast<int>(firstExpress) != any_cast<int>(secondExpress);
+			break;
+	}
+	
+	globalExpressionStack.push_back(result);
 }
 
 %}
@@ -426,15 +455,43 @@ express:
 		//$$ = $1 - $3;
 		runProgram.push_back([](){
 				doOperationWithExpression(1);
-			}); 	
+		}); 	
 	}
-	| express GREATER express {$$ = $1 > $3;}
-	| express LESSER express {$$ = $1 < $3;}
-	| express GR_EQUAL express {$$ = $1 >= $3;}
-	| express LE_EQUAL express {$$ = $1 <= $3;}
-	| express EQUALS express {$$ = $1 == $3;}
-	| express N_EQUALS express {$$ = $1 != $3;}
-	| OPEN_PAREN express CLOSE_PAREN {$$ = $2;}
+	| express GREATER express {
+		runProgram.push_back([](){
+				doOperationWithExpression(4);
+		}); 
+	}
+	| express LESSER express {
+		runProgram.push_back([](){
+				doOperationWithExpression(5);
+		}); 
+	}
+	| express GR_EQUAL express {
+		runProgram.push_back([](){
+				doOperationWithExpression(6);
+		}); 
+	}
+	| express LE_EQUAL express {
+		runProgram.push_back([](){
+				doOperationWithExpression(7);
+		}); 
+	}
+	| express EQUALS express {
+		runProgram.push_back([](){
+				doOperationWithExpression(8);
+		}); 
+	}
+	| express N_EQUALS express {
+		runProgram.push_back([](){
+				doOperationWithExpression(9);
+		}); 
+	}
+	| OPEN_PAREN express CLOSE_PAREN {
+		// Tá certo, tem que parsear os internos primeiros
+		// então fica essa declaração para dar prioridade na hora de jogar
+		// nas respectivas stacks
+	}
   ;  
 
 codeblock:

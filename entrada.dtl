@@ -1,6 +1,9 @@
 var x;
 x = 3 + 4 * 2;
 
+var xyz;
+xyz = (3 == 3);
+
 var y;
 y = x + 1;
 
