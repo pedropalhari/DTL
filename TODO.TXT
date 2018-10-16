@@ -1,3 +1,5 @@
 * Terminar Ifs (FEITO)
 * Implementar Else
 * Implementar expressões (+. -) como expressões lambda (COMEÇADO)
+  |-> Fazer o anycast quando achar uma variável na expressão
+  |-> Falta fazer o cascaded ref também

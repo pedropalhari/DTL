@@ -28,6 +28,9 @@ unordered_map<string, basicObject> *auxForObjectInitialization = new unordered_m
 vector<string> auxForCascadedObjects = vector<string>();
 
 int shouldExecute = 1;
+
+string anyTypeString = "NSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE";
+
 basicObject GLOBAL;
 //Vetor de funções lambda de instruções pro programa
 vector<function<void()>> runProgram;
@@ -38,7 +41,7 @@ vector<long> ifHeadStack;
 vector<long> ifFootStack;
 
 //Uma stack para resolver expressões, como uma calculadora. Também resolve > < == etc
-vector<int> globalExpressionStack;
+vector<any> globalExpressionStack;
 
 void decast(basicObject x) {
   if (x.type == Integer) cout << any_cast<int>(x.obj) << endl;
@@ -341,8 +344,12 @@ express:
 			
 		} 
 	| STRING {
-			any aux = (cast(GLOBAL)[$1]);
-			$$ = any_cast<int> ((cast(GLOBAL)[$1]).obj);
+			string varName = $1;
+
+			runProgram.push_back([varName]() {
+				cout << "found var " << globalExpressionStack.size() << endl;
+				globalExpressionStack.push_back(varName);
+			});
 		}
 	| cascadedRef {
 			basicObject auxDereference = GLOBAL;
@@ -361,33 +368,50 @@ express:
 				
 				runProgram.push_back([](){
 					cout << "found div " << globalExpressionStack.size() << endl;
-					int secondExpress = globalExpressionStack.back();
+					any secondExpress = globalExpressionStack.back();
 					globalExpressionStack.pop_back();
-					int firstExpress = globalExpressionStack.back();
+					any firstExpress = globalExpressionStack.back();
 					globalExpressionStack.pop_back();
-					globalExpressionStack.push_back(firstExpress / secondExpress);
+					globalExpressionStack.push_back(any_cast<int>(firstExpress) / any_cast<int>(secondExpress));
 				}); 
 			}
   | express MUL express {
 			//$$ = $1 * $3;
 			runProgram.push_back([](){
-					cout << "found div " << globalExpressionStack.size() << endl;
-					int secondExpress = globalExpressionStack.back();
+					cout << "found mul " << globalExpressionStack.size() << endl;
+					any secondExpress = globalExpressionStack.back();
 					globalExpressionStack.pop_back();
-					int firstExpress = globalExpressionStack.back();
+					any firstExpress = globalExpressionStack.back();
 					globalExpressionStack.pop_back();
-					globalExpressionStack.push_back(firstExpress * secondExpress);
+					globalExpressionStack.push_back(any_cast<int>(firstExpress) * any_cast<int>(secondExpress));
 				}); 
 		}
   | express SUM express {
 			//$$ = $1 + $3;
 			runProgram.push_back([](){
-					cout << "found div " << globalExpressionStack.size() << endl;
-					int secondExpress = globalExpressionStack.back();
+					cout << "found sum " << globalExpressionStack.size() << endl;
+					any secondExpress = globalExpressionStack.back();
 					globalExpressionStack.pop_back();
-					int firstExpress = globalExpressionStack.back();
+					any firstExpress = globalExpressionStack.back();
 					globalExpressionStack.pop_back();
-					globalExpressionStack.push_back(firstExpress + secondExpress);
+
+					if(anyTypeString.compare(firstExpress.type().name()) == 0){
+						cout << "Variable in Sum (1): " << any_cast<string>(firstExpress) << endl;
+
+						cout <<  any_cast<int> ((cast(GLOBAL)[any_cast<string>(firstExpress)]).obj) << endl;
+						firstExpress = ((cast(GLOBAL)[any_cast<string>(firstExpress)]).obj);
+					}
+
+					cout << "JDASOJDOASIDA" << endl;
+
+					if(anyTypeString.compare(secondExpress.type().name()) == 0){
+						cout << "Variable in Sum (2): " << any_cast<string>(secondExpress) << endl;
+
+						cout <<  any_cast<int> ((cast(GLOBAL)[any_cast<string>(secondExpress)]).obj) << endl;
+						secondExpress = ((cast(GLOBAL)[any_cast<string>(secondExpress)]).obj);
+					}
+
+					globalExpressionStack.push_back(any_cast<int>(firstExpress) + any_cast<int>(secondExpress));
 				}); 	
 		}
   | express MINUS express {$$ = $1 - $3;}
@@ -496,7 +520,10 @@ int main(int, char *argv[]) {
 		(*globalProgramIterator)();
 
 		for(auto i : globalExpressionStack)
-			cout << i << ", ";
+			if(anyTypeString.compare(i.type().name()) == 0)
+				cout << any_cast<string>(i) << ", ";
+			else
+				cout << any_cast<int>(i) << ", ";
 		cout << endl;
 	}
 }
