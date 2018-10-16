@@ -58,7 +58,47 @@ void checkIf(int ifHead, int ifFoot, int condition){
 	else globalProgramIterator += ifFoot - ifHead; //Pula o corpo do if
 }
 
+// 0 = +, 1 = -, 2 = *, 3 = /
+void doOperationWithExpression(int operationType){
+	cout << "found sum " << globalExpressionStack.size() << endl;
+	any secondExpress = globalExpressionStack.back();
+	globalExpressionStack.pop_back();
+	any firstExpress = globalExpressionStack.back();
+	globalExpressionStack.pop_back();
 
+	if(anyTypeString.compare(firstExpress.type().name()) == 0){
+		cout << "Variable in Expression (1): " << any_cast<string>(firstExpress) << endl;
+
+		cout <<  any_cast<int> ((cast(GLOBAL)[any_cast<string>(firstExpress)]).obj) << endl;
+		firstExpress = ((cast(GLOBAL)[any_cast<string>(firstExpress)]).obj);
+	}
+
+	if(anyTypeString.compare(secondExpress.type().name()) == 0){
+		cout << "Variable in Expression (2): " << any_cast<string>(secondExpress) << endl;
+
+		cout <<  any_cast<int> ((cast(GLOBAL)[any_cast<string>(secondExpress)]).obj) << endl;
+		secondExpress = ((cast(GLOBAL)[any_cast<string>(secondExpress)]).obj);
+	}
+
+
+	switch(operationType){
+		case 0:
+			globalExpressionStack.push_back(any_cast<int>(firstExpress) + any_cast<int>(secondExpress));
+			break;
+		
+		case 1:
+			globalExpressionStack.push_back(any_cast<int>(firstExpress) - any_cast<int>(secondExpress));
+			break;
+
+		case 2:
+			globalExpressionStack.push_back(any_cast<int>(firstExpress) * any_cast<int>(secondExpress));
+			break;
+
+		case 3:
+			globalExpressionStack.push_back(any_cast<int>(firstExpress) / any_cast<int>(secondExpress));
+			break;
+	}	
+}
 
 %}
 
@@ -367,54 +407,27 @@ express:
 				//$$ = $1 / $3;
 				
 				runProgram.push_back([](){
-					cout << "found div " << globalExpressionStack.size() << endl;
-					any secondExpress = globalExpressionStack.back();
-					globalExpressionStack.pop_back();
-					any firstExpress = globalExpressionStack.back();
-					globalExpressionStack.pop_back();
-					globalExpressionStack.push_back(any_cast<int>(firstExpress) / any_cast<int>(secondExpress));
+					doOperationWithExpression(3);
 				}); 
 			}
   | express MUL express {
 			//$$ = $1 * $3;
 			runProgram.push_back([](){
-					cout << "found mul " << globalExpressionStack.size() << endl;
-					any secondExpress = globalExpressionStack.back();
-					globalExpressionStack.pop_back();
-					any firstExpress = globalExpressionStack.back();
-					globalExpressionStack.pop_back();
-					globalExpressionStack.push_back(any_cast<int>(firstExpress) * any_cast<int>(secondExpress));
-				}); 
+					doOperationWithExpression(2);
+			}); 
 		}
   | express SUM express {
 			//$$ = $1 + $3;
 			runProgram.push_back([](){
-					cout << "found sum " << globalExpressionStack.size() << endl;
-					any secondExpress = globalExpressionStack.back();
-					globalExpressionStack.pop_back();
-					any firstExpress = globalExpressionStack.back();
-					globalExpressionStack.pop_back();
-
-					if(anyTypeString.compare(firstExpress.type().name()) == 0){
-						cout << "Variable in Sum (1): " << any_cast<string>(firstExpress) << endl;
-
-						cout <<  any_cast<int> ((cast(GLOBAL)[any_cast<string>(firstExpress)]).obj) << endl;
-						firstExpress = ((cast(GLOBAL)[any_cast<string>(firstExpress)]).obj);
-					}
-
-					cout << "JDASOJDOASIDA" << endl;
-
-					if(anyTypeString.compare(secondExpress.type().name()) == 0){
-						cout << "Variable in Sum (2): " << any_cast<string>(secondExpress) << endl;
-
-						cout <<  any_cast<int> ((cast(GLOBAL)[any_cast<string>(secondExpress)]).obj) << endl;
-						secondExpress = ((cast(GLOBAL)[any_cast<string>(secondExpress)]).obj);
-					}
-
-					globalExpressionStack.push_back(any_cast<int>(firstExpress) + any_cast<int>(secondExpress));
-				}); 	
+				doOperationWithExpression(0);
+			}); 	
 		}
-  | express MINUS express {$$ = $1 - $3;}
+  | express MINUS express {
+		//$$ = $1 - $3;
+		runProgram.push_back([](){
+				doOperationWithExpression(1);
+			}); 	
+	}
 	| express GREATER express {$$ = $1 > $3;}
 	| express LESSER express {$$ = $1 < $3;}
 	| express GR_EQUAL express {$$ = $1 >= $3;}
