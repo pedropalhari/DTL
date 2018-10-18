@@ -542,12 +542,7 @@ codeblock:
 ifhead:
 	IF_S OPEN_PAREN express CLOSE_PAREN { //Reconhece esse padrão quando começa o if
 		ifHeadStack.push_back(runProgram.size());
-		$$ = $3; 
 	};
-
-elsehead:
-	ELSE_S { shouldExecute = !shouldExecute;} //Else roda se o if não rodar, vice-versa
-	;
 
 ifelse:
 	ifhead codeblock { 
@@ -593,7 +588,6 @@ ifelse:
 		});	
 
 	} //rola depois que eu passo pelo ifhead
-	| ifhead codeblock elsehead codeblock { shouldExecute = 1;}; //rola depois que eu passo pelo ifhead
 	;
 
 
