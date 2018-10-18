@@ -53,7 +53,7 @@ void attr(basicObject &var, basicObject attribute){
 }
 
 void checkIf(int ifHead, int ifFoot, int condition){
-	cout << "TESTANDO IF: " << ifHead << " " << ifFoot << " " << condition;
+	cout << "TESTANDO IF: " << ifHead << " " << ifFoot << " " << condition << endl;
 	if(condition) return;
 	else globalProgramIterator += ifFoot - ifHead; //Pula o corpo do if
 }
@@ -540,8 +540,11 @@ ifelse:
 		int condition = $1;
 		vector<function<void()>>::iterator ifHeadPositionIterator = runProgram.begin() + ifHead;
 		runProgram.insert(ifHeadPositionIterator, [ifHead, ifFoot, condition]() { 
-			checkIf(ifHead, ifFoot, condition); 
-			cout << "CHECKING IF: " << condition << endl;	
+			int conditionResult = any_cast<int>(globalExpressionStack.back()); //O resultado da expressão está no final do Expression Stack
+			globalExpressionStack.pop_back();
+
+			checkIf(ifHead, ifFoot, conditionResult); 
+			cout << "CHECKING IF: " << conditionResult << endl;	
 		});	
 
 	} //rola depois que eu passo pelo ifhead

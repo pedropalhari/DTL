@@ -118,7 +118,7 @@ void attr(basicObject &var, basicObject attribute){
 }
 
 void checkIf(int ifHead, int ifFoot, int condition){
-	cout << "TESTANDO IF: " << ifHead << " " << ifFoot << " " << condition;
+	cout << "TESTANDO IF: " << ifHead << " " << ifFoot << " " << condition << endl;
 	if(condition) return;
 	else globalProgramIterator += ifFoot - ifHead; //Pula o corpo do if
 }
@@ -593,8 +593,8 @@ static const yytype_uint16 yyrline[] =
        0,   178,   178,   180,   181,   182,   183,   184,   185,   192,
      201,   205,   216,   230,   245,   260,   283,   284,   288,   324,
      360,   405,   416,   424,   436,   443,   449,   455,   461,   466,
-     471,   476,   481,   486,   491,   499,   502,   508,   512,   548,
-     553,   559,   568
+     471,   476,   481,   486,   491,   499,   502,   508,   512,   551,
+     556,   562,   571
 };
 #endif
 
@@ -1893,44 +1893,47 @@ yyreduce:
 		int condition = (yyvsp[-1].ival);
 		vector<function<void()>>::iterator ifHeadPositionIterator = runProgram.begin() + ifHead;
 		runProgram.insert(ifHeadPositionIterator, [ifHead, ifFoot, condition]() { 
-			checkIf(ifHead, ifFoot, condition); 
-			cout << "CHECKING IF: " << condition << endl;	
+			int conditionResult = any_cast<int>(globalExpressionStack.back()); //O resultado da expressão está no final do Expression Stack
+			globalExpressionStack.pop_back();
+
+			checkIf(ifHead, ifFoot, conditionResult); 
+			cout << "CHECKING IF: " << conditionResult << endl;	
 		});	
 
 	}
-#line 1902 "dtl.tab.c" /* yacc.c:1646  */
+#line 1905 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 548 "dtl.y" /* yacc.c:1646  */
+#line 551 "dtl.y" /* yacc.c:1646  */
     { shouldExecute = 1;}
-#line 1908 "dtl.tab.c" /* yacc.c:1646  */
+#line 1911 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 553 "dtl.y" /* yacc.c:1646  */
+#line 556 "dtl.y" /* yacc.c:1646  */
     {
 		string varName = (yyvsp[0].sval);
 		runProgram.push_back([varName]() {
 			cout << varName << " = ";
 			decast(cast(GLOBAL)[varName]);
 		});}
-#line 1919 "dtl.tab.c" /* yacc.c:1646  */
+#line 1922 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 559 "dtl.y" /* yacc.c:1646  */
+#line 562 "dtl.y" /* yacc.c:1646  */
     {
 		string varName = (yyvsp[0].sval);
 		runProgram.push_back([varName]() {
 			cout << varName << " = ";
 			decast(cast(GLOBAL)[varName]);
 		});}
-#line 1930 "dtl.tab.c" /* yacc.c:1646  */
+#line 1933 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1934 "dtl.tab.c" /* yacc.c:1646  */
+#line 1937 "dtl.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2158,7 +2161,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 570 "dtl.y" /* yacc.c:1906  */
+#line 573 "dtl.y" /* yacc.c:1906  */
 
 
 int main(int, char *argv[]) {
