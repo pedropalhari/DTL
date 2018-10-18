@@ -43,7 +43,7 @@ vector<long> ifFootStack;
 
 //Stack para identificar blocos de função 
 unordered_map<string, long> functionMap; //Pra chamada de função
-vector<long> functionReturnStack; //Pro retorno da função
+vector<vector<function<void()>>::iterator> functionReturnStack; //Pro retorno da função
 vector<long> functionHeadStack;
 vector<long> functionFootStack;
 
@@ -193,6 +193,7 @@ body:
 	| ifelse body
 	| print body
 	| function body
+	| funCall body
 	;
 
 //O QUE ACONTECE AQUI É QUE EU USO UM OBJETO GLOBAL PRA 
@@ -650,14 +651,28 @@ function:
 
 		vector<function<void()>>::iterator functionFootPositionIterator = runProgram.begin() + functionFoot;
 		runProgram.push_back([]() { 
-			cout << "RETURNING FROM FUNCTION" << endl;
-			long lastPosition = functionReturnStack.back();
-			functionReturnStack.pop_back();
+			cout << "RETURNING FROM FUNCTION" << endl;			
 
 			//vector<function<void()>>::iterator returnIterator = ;
-			globalProgramIterator = runProgram.begin() + lastPosition + 3;
+			globalProgramIterator = functionReturnStack.back();
+			functionReturnStack.pop_back();
+		});
+	};
+
+funCall:
+	STRING OPEN_PAREN CLOSE_PAREN ENDL{
+		string functionName = $1;
+
+		runProgram.push_back([functionName]() { 
+			cout << "CALLING FUNCTION " << functionName << " ON ADDRESS " << functionMap[functionName] << endl;
+			functionReturnStack.push_back(globalProgramIterator);
+			cout << "RETURN ADDRESS SAVED" << endl;
+
+			//vector<function<void()>>::iterator returnIterator = ;
+			globalProgramIterator = runProgram.begin() + functionMap[functionName];
 		});
 	}
+	;
 %%
 
 int main(int, char *argv[]) {

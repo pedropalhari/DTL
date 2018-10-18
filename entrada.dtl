@@ -40,3 +40,6 @@ fun teste {
 
 t = 4;
 t = 5;
+
+teste();
+teste();
