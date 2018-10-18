@@ -240,7 +240,7 @@ varAttribution:
 			cout << "VARIABLE ATTRIBUTION: (INTEGER) " << varName << " = ";
 			decast(cast(GLOBAL)[varName]);	 	
 		});				
-
+		
 	}
 	|	STRING ATTRIBUTION STRING_Q ENDL {
 		
@@ -286,14 +286,15 @@ cascadedRef:
 
 varAttributionCascaded:
  cascadedRef ATTRIBUTION express ENDL {
-	 
-		basicObject auxObject;
-		auxObject.type = Integer;
-		auxObject.obj = $3;
-
 		vector<string> localCascadedObjects = auxForCascadedObjects;
 
-		runProgram.push_back([auxObject, localCascadedObjects]() { 			
+		runProgram.push_back([localCascadedObjects]() { 			
+			basicObject auxObject;
+			auxObject.type = Integer;
+			auxObject.obj = globalExpressionStack.back();
+			globalExpressionStack.pop_back();
+
+
 			string stringForPrintingLater;
 			basicObject auxDereference = GLOBAL;
 			for(auto x : localCascadedObjects){
