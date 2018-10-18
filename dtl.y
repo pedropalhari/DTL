@@ -8,6 +8,7 @@
 #include <functional>
 #include <stdlib.h> //Exit
 #define cast(X) (*any_cast<unordered_map<string, basicObject>*>(X.obj))
+#define DEBUG_MODE false
 
 using namespace std;
 
@@ -61,7 +62,10 @@ void attr(basicObject &var, basicObject attribute){
 }
 
 void checkIf(int ifHead, int ifFoot, int condition){
-	cout << "TESTANDO IF: " << ifHead << " " << ifFoot << " " << condition << endl;
+	if(DEBUG_MODE){
+		cout << "TESTANDO IF: " << ifHead << " " << ifFoot << " " << condition << endl;
+	}
+
 	if(condition) return;
 	else globalProgramIterator += ifFoot - ifHead; //Pula o corpo do if
 }
@@ -70,23 +74,26 @@ void checkIf(int ifHead, int ifFoot, int condition){
 // 4 = >, 5 = <, 6 = >=, 7 = <=
 // 8 = ==, 9 = !=
 void doOperationWithExpression(int operationType){
-	cout << "found sum " << globalExpressionStack.size() << endl;
 	any secondExpress = globalExpressionStack.back();
 	globalExpressionStack.pop_back();
 	any firstExpress = globalExpressionStack.back();
 	globalExpressionStack.pop_back();
 
 	if(anyTypeString.compare(firstExpress.type().name()) == 0){
-		cout << "Variable in Expression (1): " << any_cast<string>(firstExpress) << endl;
+		if(DEBUG_MODE){
+			cout << "Variable in Expression (1): " << any_cast<string>(firstExpress) << endl;
+			cout <<  any_cast<int> ((cast(GLOBAL)[any_cast<string>(firstExpress)]).obj) << endl;
+		}
 
-		cout <<  any_cast<int> ((cast(GLOBAL)[any_cast<string>(firstExpress)]).obj) << endl;
 		firstExpress = ((cast(GLOBAL)[any_cast<string>(firstExpress)]).obj);
 	}
 
 	if(anyTypeString.compare(secondExpress.type().name()) == 0){
-		cout << "Variable in Expression (2): " << any_cast<string>(secondExpress) << endl;
+		if(DEBUG_MODE){
+			cout << "Variable in Expression (2): " << any_cast<string>(secondExpress) << endl;
+			cout <<  any_cast<int> ((cast(GLOBAL)[any_cast<string>(secondExpress)]).obj) << endl;
+		}
 
-		cout <<  any_cast<int> ((cast(GLOBAL)[any_cast<string>(secondExpress)]).obj) << endl;
 		secondExpress = ((cast(GLOBAL)[any_cast<string>(secondExpress)]).obj);
 	}
 
@@ -184,7 +191,10 @@ void doOperationWithExpression(int operationType){
 // make a real one shortly:
 
 wholeProgram:
-	body {cout << "FINISHED!" << endl;}
+	body {
+		if(DEBUG_MODE)
+			cout << "FINISHED!" << endl;
+	};
 
 body:
 	| varDeclaration body
@@ -232,7 +242,9 @@ varDeclaration:
 
 		runProgram.push_back([auxObject, varName]() { 
 			attr(cast(GLOBAL)[varName], auxObject); 
-			cout << "VARIABLE DECLARATION: " << varName << endl;	
+
+			if(DEBUG_MODE)
+				cout << "VARIABLE DECLARATION: " << varName << endl;	
 		});		
   }
 	;
@@ -248,8 +260,11 @@ varAttribution:
 			globalExpressionStack.pop_back();
 
 			attr(cast(GLOBAL)[varName], auxObject); 
-			cout << "VARIABLE ATTRIBUTION: (INTEGER) " << varName << " = ";
-			decast(cast(GLOBAL)[varName]);	 	
+
+			if(DEBUG_MODE){
+				cout << "VARIABLE ATTRIBUTION: (INTEGER) " << varName << " = ";
+				decast(cast(GLOBAL)[varName]);	 	
+			}
 		});				
 		
 	}
@@ -264,8 +279,11 @@ varAttribution:
 
 		runProgram.push_back([auxObject, varName]() { 
 			attr(cast(GLOBAL)[varName], auxObject); 
-			cout << "VARIABLE ATTRIBUTION: (STRING) " << varName << " = ";
-			decast(cast(GLOBAL)[varName]);	 	
+
+			if(DEBUG_MODE){
+				cout << "VARIABLE ATTRIBUTION: (STRING) " << varName << " = ";
+				decast(cast(GLOBAL)[varName]);	 
+			}	
 		});				
 	}
 	|	STRING ATTRIBUTION object ENDL {
@@ -279,13 +297,15 @@ varAttribution:
 		runProgram.push_back([auxObject, varName]() { 
 			attr(cast(GLOBAL)[varName], auxObject); 
 
-			cout << "VARIABLE ATTRIBUTION: (OBJECT) " << varName << " = {" << endl;
+			if(DEBUG_MODE){
+				cout << "VARIABLE ATTRIBUTION: (OBJECT) " << varName << " = {" << endl;
 
-			for(auto x : cast(cast(GLOBAL)[varName])){
-				cout << "\t" << x.first << " = ";
-				decast(x.second);
+				for(auto x : cast(cast(GLOBAL)[varName])){
+					cout << "\t" << x.first << " = ";
+					decast(x.second);
+				}
+				cout << "}" << endl;
 			}
-			cout << "}" << endl;
 		});
 	}
 	;
@@ -318,16 +338,18 @@ varAttributionCascaded:
 				}
 			}
 
-			cout << "VARIABLE ATTRIBUTION: (INTEGER) ";
-			
-			for(auto x : localCascadedObjects) 
-				if(x == localCascadedObjects.front())
-					cout << x;
-				else cout << "." << x;
+			if(DEBUG_MODE){
+				cout << "VARIABLE ATTRIBUTION: (INTEGER) ";
+				
+				for(auto x : localCascadedObjects) 
+					if(x == localCascadedObjects.front())
+						cout << x;
+					else cout << "." << x;
 
-			cout << " = ";
+				cout << " = ";
 
-			decast(cast(auxDereference)[stringForPrintingLater]);
+				decast(cast(auxDereference)[stringForPrintingLater]);
+			}
 		});
 
 		auxForCascadedObjects.clear();		
@@ -354,16 +376,18 @@ varAttributionCascaded:
 				}
 			}
 
-			cout << "VARIABLE ATTRIBUTION: (STRING) ";
-			
-			for(auto x : localCascadedObjects) 
-				if(x == localCascadedObjects.front())
-					cout << x;
-				else cout << "." << x;
+			if(DEBUG_MODE){
+				cout << "VARIABLE ATTRIBUTION: (STRING) ";
+				
+				for(auto x : localCascadedObjects) 
+					if(x == localCascadedObjects.front())
+						cout << x;
+					else cout << "." << x;
 
-			cout << " = ";
+				cout << " = ";
 
-			decast(cast(auxDereference)[stringForPrintingLater]);
+				decast(cast(auxDereference)[stringForPrintingLater]);
+			}
 		});
 
 		auxForCascadedObjects.clear();
@@ -389,20 +413,22 @@ varAttributionCascaded:
 				}
 			}
 
-			cout << "VARIABLE ATTRIBUTION: (OBJECT) ";
-			
-			for(auto x : localCascadedObjects) 
-				if(x == localCascadedObjects.front())
-					cout << x;
-				else cout << "." << x;
+			if(DEBUG_MODE){
+				cout << "VARIABLE ATTRIBUTION: (OBJECT) ";
+				
+				for(auto x : localCascadedObjects) 
+					if(x == localCascadedObjects.front())
+						cout << x;
+					else cout << "." << x;
 
-			cout << " = {" << endl;
+				cout << " = {" << endl;
 
-			for(auto x : cast(cast(auxDereference)[stringForPrintingLater])){
-				cout << "\t" << x.first << " = ";
-				decast(x.second);
+				for(auto x : cast(cast(auxDereference)[stringForPrintingLater])){
+					cout << "\t" << x.first << " = ";
+					decast(x.second);
+				}
+				cout << "}" << endl;
 			}
-			cout << "}" << endl;
 
 			//decast((cast(auxDereference))[stringForPrintingLater]);
 		});
@@ -419,7 +445,9 @@ express:
 			int numberFound = $1;
 
 			runProgram.push_back([numberFound]() {
-				cout << "found int " << globalExpressionStack.size() << endl;
+				if(DEBUG_MODE)
+					cout << "Int pushed to expression stack " << globalExpressionStack.size() << endl;
+
 				globalExpressionStack.push_back(numberFound);
 			});
 			
@@ -428,7 +456,9 @@ express:
 			string varName = $1;
 
 			runProgram.push_back([varName]() {
-				cout << "found var " << globalExpressionStack.size() << endl;
+				if(DEBUG_MODE)
+					cout << "Var pushed to expression stack " << globalExpressionStack.size() << endl;
+
 				globalExpressionStack.push_back(varName);
 			});
 		}
@@ -524,24 +554,29 @@ ifelse:
 		//Reconhece esse padrão quando acaba o if
 		ifFootStack.push_back(runProgram.size()); 
 
-		cout << "IF HEAD STACK: ";
-		for(auto x : ifHeadStack)
-			cout << x << " ";
-		cout << endl;
+		if(DEBUG_MODE){
+			cout << "IF HEAD STACK: ";
+			for(auto x : ifHeadStack)
+				cout << x << " ";
+			cout << endl;
 
-		cout << "IF FOOT STACK: ";
-		for(auto x : ifFootStack)
-			cout << x << " ";
-		cout << endl;
+			cout << "IF FOOT STACK: ";
+			for(auto x : ifFootStack)
+				cout << x << " ";
+			cout << endl;
 
-		cout << "FECHANDO UM IF:";
+			cout << "FECHANDO UM IF:";
+		}
+
 		int ifHead = ifHeadStack.back();
 		int ifFoot = ifFootStack.back();
 
 		ifHeadStack.pop_back();
 		ifFootStack.pop_back();
 
-		cout << ifHead << " " << ifFoot << endl;
+		if(DEBUG_MODE){
+			cout << ifHead << " " << ifFoot << endl;
+		}
 
 		// AQUI EU COLOCO UMA FUNÇÃO NO RUNPROGRAM QUE FAZ O CHEQUE DOS IFS, ESSA FUNCAO FICA 
 		// NA POSICAO IFHEAD (INSERT), COMPARA O STATEMENT E CONTINUA OU PULA A EXECUÇÃO PRO
@@ -555,7 +590,6 @@ ifelse:
 			globalExpressionStack.pop_back();
 
 			checkIf(ifHead, ifFoot, conditionResult); 
-			cout << "CHECKING IF: " << conditionResult << endl;	
 		});	
 
 	} //rola depois que eu passo pelo ifhead
@@ -624,24 +658,25 @@ function:
 		//Reconhece esse padrão quando acaba a declaração de função
 		functionFootStack.push_back(runProgram.size()); 
 
-		cout << "FUNCTION HEAD STACK: ";
-		for(auto x : functionHeadStack)
-			cout << x << " ";
-		cout << endl;
+		if(DEBUG_MODE){
+			cout << "FUNCTION HEAD STACK: ";
+			for(auto x : functionHeadStack)
+				cout << x << " ";
+			cout << endl;
 
-		cout << "FUNCTION FOOT STACK: ";
-		for(auto x : functionFootStack)
-			cout << x << " ";
-		cout << endl;
+			cout << "FUNCTION FOOT STACK: ";
+			for(auto x : functionFootStack)
+				cout << x << " ";
+			cout << endl;
 
-		cout << "FECHANDO UMA FUNCAO:";
+			cout << "FECHANDO UMA FUNCAO:";
+		}
+
 		int functionHead = functionHeadStack.back();
 		int functionFoot = functionFootStack.back();
 
 		functionHeadStack.pop_back();
 		functionFootStack.pop_back();
-
-		cout << functionHead << " " << functionFoot << endl;
 
 		// Aqui eu pulo a declaração do corpo da função de executar e insiro no seu pé um return		
 		vector<function<void()>>::iterator functionHeadPositionIterator = runProgram.begin() + functionHead;
@@ -651,7 +686,8 @@ function:
 
 		vector<function<void()>>::iterator functionFootPositionIterator = runProgram.begin() + functionFoot;
 		runProgram.push_back([]() { 
-			cout << "RETURNING FROM FUNCTION" << endl;			
+			if(DEBUG_MODE)
+				cout << "RETURNING FROM FUNCTION" << endl;			
 
 			//vector<function<void()>>::iterator returnIterator = ;
 			globalProgramIterator = functionReturnStack.back();
@@ -664,9 +700,12 @@ funCall:
 		string functionName = $1;
 
 		runProgram.push_back([functionName]() { 
-			cout << "CALLING FUNCTION " << functionName << " ON ADDRESS " << functionMap[functionName] << endl;
 			functionReturnStack.push_back(globalProgramIterator);
-			cout << "RETURN ADDRESS SAVED" << endl;
+
+			if(DEBUG_MODE){
+				cout << "CALLING FUNCTION " << functionName << " ON ADDRESS " << functionMap[functionName] << endl;
+				cout << "RETURN ADDRESS SAVED" << endl;
+			}
 
 			//vector<function<void()>>::iterator returnIterator = ;
 			globalProgramIterator = runProgram.begin() + functionMap[functionName];
@@ -696,12 +735,14 @@ int main(int, char *argv[]) {
 		//cout << i++ << endl;
 		(*globalProgramIterator)();
 
-		for(auto i : globalExpressionStack)
-			if(anyTypeString.compare(i.type().name()) == 0)
-				cout << any_cast<string>(i) << ", ";
-			else
-				cout << any_cast<int>(i) << ", ";
-		cout << endl;
+		if(DEBUG_MODE){
+			for(auto i : globalExpressionStack)
+				if(anyTypeString.compare(i.type().name()) == 0)
+					cout << any_cast<string>(i) << ", ";
+				else
+					cout << any_cast<int>(i) << ", ";
+			cout << endl;
+		}
 	}
 }
 
