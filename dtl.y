@@ -8,7 +8,7 @@
 #include <functional>
 #include <stdlib.h> //Exit
 #define cast(X) (*any_cast<unordered_map<string, basicObject>*>(X.obj))
-#define DEBUG_MODE false
+#define DEBUG_MODE true
 
 using namespace std;
 
@@ -42,6 +42,10 @@ vector<function<void()>>::iterator globalProgramIterator;
 vector<long> ifHeadStack;
 vector<long> ifFootStack;
 
+//Stack para identificar blocos de função while
+vector<long> whileHeadStack;
+vector<long> whileFootStack;
+
 //Stack para identificar blocos de função 
 unordered_map<string, long> functionMap; //Pra chamada de função
 vector<vector<function<void()>>::iterator> functionReturnStack; //Pro retorno da função
@@ -51,6 +55,9 @@ vector<long> functionFootStack;
 
 //Uma stack para resolver expressões, como uma calculadora. Também resolve > < == etc
 vector<any> globalExpressionStack;
+vector<any> globalExpressionStackDuplicate; //Usado pois o while precisa ficar reavaliando a mesma expressão
+vector<any> globalExpressionStackDuplicateAux; //Usado pois o while precisa ficar reavaliando a mesma expressão
+int shouldDuplicateExpresssionStack = false;
 
 void decast(basicObject x) {
   if (x.type == Integer) cout << any_cast<int>(x.obj) << endl;
@@ -204,6 +211,7 @@ body:
 	| print body
 	| function body
 	| funCall body
+	| while body
 	;
 
 //O QUE ACONTECE AQUI É QUE EU USO UM OBJETO GLOBAL PRA 
@@ -449,6 +457,9 @@ express:
 					cout << "Int pushed to expression stack " << globalExpressionStack.size() << endl;
 
 				globalExpressionStack.push_back(numberFound);
+
+				if(shouldDuplicateExpresssionStack)
+					globalExpressionStackDuplicate.push_back(varName);
 			});
 			
 		} 
@@ -460,6 +471,9 @@ express:
 					cout << "Var pushed to expression stack " << globalExpressionStack.size() << endl;
 
 				globalExpressionStack.push_back(varName);
+
+				if(shouldDuplicateExpresssionStack)
+					globalExpressionStackDuplicate.push_back(varName);
 			});
 		}
 	| cascadedRef {
@@ -578,9 +592,8 @@ ifelse:
 		// IFFOOT
 		
 		//runProgram checkIf(ifHead, ifFoot, $1); falta dar o Insert e jogar no runprogram
-		int condition = $1;
 		vector<function<void()>>::iterator ifHeadPositionIterator = runProgram.begin() + ifHead;
-		runProgram.insert(ifHeadPositionIterator, [ifHead, ifFoot, condition]() { 
+		runProgram.insert(ifHeadPositionIterator, [ifHead, ifFoot]() { 
 			int conditionResult = any_cast<int>(globalExpressionStack.back()); //O resultado da expressão está no final do Expression Stack
 			globalExpressionStack.pop_back();
 
@@ -706,6 +719,65 @@ funCall:
 		});
 	}
 	;
+
+whileAtomic:
+	WHILE_S {
+		shouldDuplicateExpresssionStack = true;
+	}
+
+whileHead:
+	WHILE_S OPEN_PAREN express CLOSE_PAREN { //Reconhece esse padrão quando começa o if
+		whileHeadStack.push_back(runProgram.size());
+		shouldDuplicateExpresssionStack = false;
+	};
+
+while:
+	whileHead codeblock { 
+		//Reconhece esse padrão quando acaba o if
+		whileFootStack.push_back(runProgram.size()); 
+
+		if(DEBUG_MODE){
+			cout << "IF HEAD STACK: ";
+			for(auto x : whileHeadStack)
+				cout << x << " ";
+			cout << endl;
+
+			cout << "IF FOOT STACK: ";
+			for(auto x : whileFootStack)
+				cout << x << " ";
+			cout << endl;
+
+			cout << "FECHANDO UM IF:";
+		}
+
+		int whileHead = whileHeadStack.back();
+		int whileFoot = whileFootStack.back();
+
+		whileHeadStack.pop_back();
+		whileFootStack.pop_back();
+
+		if(DEBUG_MODE){
+			cout << whileHead << " " << whileFoot << endl;
+		}
+		
+		vector<function<void()>>::iterator whileHeadPositionIterator = runProgram.begin() + whileHead;
+		runProgram.insert(whileHeadPositionIterator, [whileHead, whileFoot]() { 
+			int conditionResult = any_cast<int>(globalExpressionStack.back()); //O resultado da expressão está no final do Expression Stack
+			globalExpressionStack.pop_back();
+
+			checkIf(whileHead, whileFoot + 1, conditionResult); 
+		});	
+
+		runProgram.push_back([whileHead]() { 
+			if(DEBUG_MODE)
+				cout << " GO TO HEAD OF WHILE " << endl;			
+
+			//vector<function<void()>>::iterator returnIterator = ;
+			globalProgramIterator = runProgram.begin() + whileHead;
+		});
+	}
+	;
+
 %%
 
 int main(int, char *argv[]) {

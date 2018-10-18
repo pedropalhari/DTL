@@ -1,17 +1,9 @@
 var x;
-var count;
 
-x = 5;
-count = x - 1;
+x = 4;
 
-fun fatorial {
-  if(count > 1){
-    x = x * count;
-    count = count - 1;
-
-    fatorial();
-  }
+while(x != 4){
+  x = 4;
 }
 
-fatorial();
-print(x);
+x = 6;
