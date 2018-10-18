@@ -15,6 +15,28 @@ a = {var b, var c};
 a.b = (3 * 4);
 a.c = 5;
 
-if(x > 100){
-  a.b = 3;
+if(x > 10){
+
+  if(x == 11){
+    a.b = 3;
+
+    var c;
+    c = "aoaoao";
+    
+    print("123123");
+  }
+
+  if(x > 100){
+    a.b = 5;
+  }
 }
+
+var t;
+t = 6;
+
+fun teste {
+  t = 3;
+}
+
+t = 4;
+t = 5;

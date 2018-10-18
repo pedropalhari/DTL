@@ -6,6 +6,7 @@
 #include <string>
 #include <any>
 #include <functional>
+#include <stdlib.h> //Exit
 #define cast(X) (*any_cast<unordered_map<string, basicObject>*>(X.obj))
 
 using namespace std;
@@ -39,6 +40,13 @@ vector<function<void()>>::iterator globalProgramIterator;
 //Stack para identificar blocos de função if
 vector<long> ifHeadStack;
 vector<long> ifFootStack;
+
+//Stack para identificar blocos de função 
+unordered_map<string, long> functionMap; //Pra chamada de função
+vector<long> functionReturnStack; //Pro retorno da função
+vector<long> functionHeadStack;
+vector<long> functionFootStack;
+
 
 //Uma stack para resolver expressões, como uma calculadora. Também resolve > < == etc
 vector<any> globalExpressionStack;
@@ -148,6 +156,7 @@ void doOperationWithExpression(int operationType){
 %type <sval> printVar;
 
 %type <ival> ifhead
+%type <ival> functionHead
 
 // Define the "terminal symbol" token types I'm going to use (in CAPS
 // by convention), and associate each with a field of the union:
@@ -160,7 +169,7 @@ void doOperationWithExpression(int operationType){
 %token DECLARATION QMARKS ATTRIBUTION DOT
 %token OPEN_CBRACKETS CLOSE_CBRACKETS COMMA OPEN_PAREN CLOSE_PAREN
 %token GREATER LESSER EQUALS N_EQUALS GR_EQUAL LE_EQUAL
-%token IF_S ELSE_S WHILE_S
+%token IF_S ELSE_S WHILE_S FUNC
 %token PRINT
 
 %token SUM MINUS MUL DIV
@@ -183,6 +192,7 @@ body:
 	| varAttributionCascaded body
 	| ifelse body
 	| print body
+	| function body
 	;
 
 //O QUE ACONTECE AQUI É QUE EU USO UM OBJETO GLOBAL PRA 
@@ -559,17 +569,95 @@ printVar:
 			cout << varName << " = ";
 			decast(cast(GLOBAL)[varName]);
 		});}
+	| STRING_Q {
+		string textToPrint = $1;
+		runProgram.push_back([textToPrint]() {
+			//retirando as aspas
+			cout << textToPrint.substr(1, textToPrint.length() - 2);
+		});}
+	| cascadedRef {
+			vector<string> localCascadedObjects = auxForCascadedObjects;
+
+			runProgram.push_back([localCascadedObjects]() { 			
+				string stringForPrintingLater;
+				basicObject auxDereference = GLOBAL;
+				for(auto x : localCascadedObjects){
+					if(x == localCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele						
+						stringForPrintingLater = x;				
+					} else { //Se não vai descendo recursivamente
+						auxDereference = cast(auxDereference)[x];
+					}
+				}
+								
+				for(auto x : localCascadedObjects) 
+					if(x == localCascadedObjects.front())
+						cout << x;
+					else cout << "." << x;
+
+				cout << " = ";
+
+				decast(cast(auxDereference)[stringForPrintingLater]);
+			});
+		}
 	| printVar COMMA STRING {
 		string varName = $3;
 		runProgram.push_back([varName]() {
 			cout << varName << " = ";
 			decast(cast(GLOBAL)[varName]);
 		});}
+	
 	;
 
 print:
 	PRINT OPEN_PAREN printVar CLOSE_PAREN ENDL
 	;
+
+functionHead:
+	FUNC STRING { //Reconhece esse padrão quando começa a declaração de função
+		functionMap[$2] = runProgram.size();
+		functionHeadStack.push_back(runProgram.size());		
+	};
+
+function:
+	functionHead codeblock { 
+		//Reconhece esse padrão quando acaba a declaração de função
+		functionFootStack.push_back(runProgram.size()); 
+
+		cout << "FUNCTION HEAD STACK: ";
+		for(auto x : functionHeadStack)
+			cout << x << " ";
+		cout << endl;
+
+		cout << "FUNCTION FOOT STACK: ";
+		for(auto x : functionFootStack)
+			cout << x << " ";
+		cout << endl;
+
+		cout << "FECHANDO UMA FUNCAO:";
+		int functionHead = functionHeadStack.back();
+		int functionFoot = functionFootStack.back();
+
+		functionHeadStack.pop_back();
+		functionFootStack.pop_back();
+
+		cout << functionHead << " " << functionFoot << endl;
+
+		// Aqui eu pulo a declaração do corpo da função de executar e insiro no seu pé um return		
+		vector<function<void()>>::iterator functionHeadPositionIterator = runProgram.begin() + functionHead;
+		runProgram.insert(functionHeadPositionIterator, [functionHead, functionFoot]() { 
+			globalProgramIterator += functionFoot - functionHead + 1; //+1 para considerar o retorno da função também
+		});
+
+		vector<function<void()>>::iterator functionFootPositionIterator = runProgram.begin() + functionFoot;
+		runProgram.push_back([]() { 
+			cout << "RETURNING FROM FUNCTION" << endl;
+			long lastPosition = functionReturnStack.back();
+			functionReturnStack.pop_back();
+
+			//vector<function<void()>>::iterator returnIterator = ;
+			globalProgramIterator = runProgram.begin() + lastPosition + 3;
+		});
+	}
 %%
 
 int main(int, char *argv[]) {
