@@ -8,7 +8,7 @@
 #include <functional>
 #include <stdlib.h> //Exit
 #define cast(X) (*any_cast<unordered_map<string, basicObject>*>(X.obj))
-#define DEBUG_MODE true
+#define DEBUG_MODE false
 
 using namespace std;
 
@@ -44,6 +44,7 @@ vector<long> ifFootStack;
 
 //Stack para identificar blocos de função while
 vector<long> whileHeadStack;
+vector<long> whileBodyStack;
 vector<long> whileFootStack;
 
 //Stack para identificar blocos de função 
@@ -56,7 +57,7 @@ vector<long> functionFootStack;
 //Uma stack para resolver expressões, como uma calculadora. Também resolve > < == etc
 vector<any> globalExpressionStack;
 vector<any> globalExpressionStackDuplicate; //Usado pois o while precisa ficar reavaliando a mesma expressão
-vector<any> globalExpressionStackDuplicateAux; //Usado pois o while precisa ficar reavaliando a mesma expressão
+vector<function<void()>> globalOperationStackDuplicate; //Usado pois o while precisa ficar reavaliando a mesma expressão (operacoes)
 int shouldDuplicateExpresssionStack = false;
 
 void decast(basicObject x) {
@@ -451,6 +452,9 @@ express:
 		//$$ = $1;
 
 			int numberFound = $1;
+			
+			if(DEBUG_MODE)
+				cout << "Program counter position: " << runProgram.size() << endl;
 
 			runProgram.push_back([numberFound]() {
 				if(DEBUG_MODE)
@@ -459,7 +463,7 @@ express:
 				globalExpressionStack.push_back(numberFound);
 
 				if(shouldDuplicateExpresssionStack)
-					globalExpressionStackDuplicate.push_back(varName);
+					globalExpressionStackDuplicate.push_back(numberFound);
 			});
 			
 		} 
@@ -494,6 +498,11 @@ express:
 				runProgram.push_back([](){
 					doOperationWithExpression(3);
 				}); 
+
+				if(shouldDuplicateExpresssionStack)
+					globalOperationStackDuplicate.push_back([](){
+						doOperationWithExpression(3);
+					}); 
 			}
   | express MUL express {
 			//$$ = $1 * $3;
@@ -615,7 +624,7 @@ printVar:
 		string textToPrint = $1;
 		runProgram.push_back([textToPrint]() {
 			//retirando as aspas
-			cout << textToPrint.substr(1, textToPrint.length() - 2);
+			cout << textToPrint.substr(1, textToPrint.length() - 2) << endl;
 		});}
 	| cascadedRef {
 			vector<string> localCascadedObjects = auxForCascadedObjects;
@@ -722,12 +731,15 @@ funCall:
 
 whileAtomic:
 	WHILE_S {
+		if(DEBUG_MODE)
+			cout << "ATOMIC WHILE FOUND: " << runProgram.size() << endl; 
 		shouldDuplicateExpresssionStack = true;
-	}
+		whileHeadStack.push_back(runProgram.size());
+	};
 
 whileHead:
-	WHILE_S OPEN_PAREN express CLOSE_PAREN { //Reconhece esse padrão quando começa o if
-		whileHeadStack.push_back(runProgram.size());
+	whileAtomic OPEN_PAREN express CLOSE_PAREN { //Reconhece esse padrão quando começa o if
+		whileBodyStack.push_back(runProgram.size());
 		shouldDuplicateExpresssionStack = false;
 	};
 
@@ -737,43 +749,44 @@ while:
 		whileFootStack.push_back(runProgram.size()); 
 
 		if(DEBUG_MODE){
-			cout << "IF HEAD STACK: ";
+			cout << "WHILE HEAD STACK: ";
 			for(auto x : whileHeadStack)
 				cout << x << " ";
 			cout << endl;
 
-			cout << "IF FOOT STACK: ";
+			cout << "WHILE FOOT STACK: ";
 			for(auto x : whileFootStack)
 				cout << x << " ";
 			cout << endl;
 
-			cout << "FECHANDO UM IF:";
+			cout << "FECHANDO UM WHILE:";
 		}
 
 		int whileHead = whileHeadStack.back();
 		int whileFoot = whileFootStack.back();
+		int whileBody = whileBodyStack.back();
 
 		whileHeadStack.pop_back();
 		whileFootStack.pop_back();
+		whileBodyStack.pop_back();
 
 		if(DEBUG_MODE){
 			cout << whileHead << " " << whileFoot << endl;
 		}
 		
-		vector<function<void()>>::iterator whileHeadPositionIterator = runProgram.begin() + whileHead;
-		runProgram.insert(whileHeadPositionIterator, [whileHead, whileFoot]() { 
+		vector<function<void()>>::iterator whileBodyPositionIterator = runProgram.begin() + whileBody;
+		runProgram.insert(whileBodyPositionIterator, [whileHead, whileFoot]() { 
 			int conditionResult = any_cast<int>(globalExpressionStack.back()); //O resultado da expressão está no final do Expression Stack
 			globalExpressionStack.pop_back();
 
-			checkIf(whileHead, whileFoot + 1, conditionResult); 
+			checkIf(whileHead, whileFoot - 2, conditionResult); 
 		});	
 
 		runProgram.push_back([whileHead]() { 
 			if(DEBUG_MODE)
 				cout << " GO TO HEAD OF WHILE " << endl;			
 
-			//vector<function<void()>>::iterator returnIterator = ;
-			globalProgramIterator = runProgram.begin() + whileHead;
+			globalProgramIterator = runProgram.begin() + whileHead - 1;
 		});
 	}
 	;

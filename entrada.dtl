@@ -1,9 +1,8 @@
 var x;
 
-x = 4;
+x = 1;
 
 while(x != 4){
-  x = 4;
+  x = x + 1;
+  print("AOAOAOAO");
 }
-
-x = 6;
