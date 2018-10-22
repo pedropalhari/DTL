@@ -74,8 +74,14 @@ void checkIf(int ifHead, int ifFoot, int condition){
 		cout << "TESTANDO IF: " << ifHead << " " << ifFoot << " " << condition << endl;
 	}
 
-	if(condition) return;
-	else globalProgramIterator += ifFoot - ifHead; //Pula o corpo do if
+	if(condition){
+		cout << "IF INDO PARA A PROX INSTRUÇÃO" << endl;
+		return;
+	}
+	else {
+		cout << "IF INDO PARA " << ifFoot - ifHead << endl; 
+		globalProgramIterator += ifFoot - ifHead; //Pula o corpo do if
+	}
 }
 
 // 0 = +, 1 = -, 2 = *, 3 = /
@@ -752,6 +758,8 @@ whileAtomic:
 		if(DEBUG_MODE)
 			cout << "ATOMIC WHILE FOUND: " << runProgram.size() << endl; 
 		shouldDuplicateExpresssionStack = true;
+
+		runProgram.push_back([]() {});
 		whileHeadStack.push_back(runProgram.size());
 	};
 
@@ -802,7 +810,7 @@ while:
 
 		runProgram.push_back([whileHead]() { 
 			if(DEBUG_MODE)
-				cout << " GO TO HEAD OF WHILE " << endl;			
+				cout << " GO TO HEAD OF WHILE " << whileHead - 1 << endl;			
 
 			globalProgramIterator = runProgram.begin() + whileHead - 1;
 		});

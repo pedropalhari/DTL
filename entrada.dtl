@@ -1,17 +1,23 @@
+fun facX {
+  var counter;
+  counter = x - 1;
+
+  while(counter > 1){
+    x = x * counter;
+    
+    counter = counter - 1;
+  }
+}
+
 var x;
+x = 3;
 
-x = 1;
+facX();
 
-var y;
-y = {var a, var b};
-y.b = 7;
-
-x = 2;
-
-x = y.b;
 print(x);
 
-while(x != 4){
-  x = 4;
-  print("AOAOAOAO");
+while(x < 8){
+  x = x + 1;
 }
+
+print("UDSDUASHDUIA");

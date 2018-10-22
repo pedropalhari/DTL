@@ -139,8 +139,14 @@ void checkIf(int ifHead, int ifFoot, int condition){
 		cout << "TESTANDO IF: " << ifHead << " " << ifFoot << " " << condition << endl;
 	}
 
-	if(condition) return;
-	else globalProgramIterator += ifFoot - ifHead; //Pula o corpo do if
+	if(condition){
+		cout << "IF INDO PARA A PROX INSTRUÇÃO" << endl;
+		return;
+	}
+	else {
+		cout << "IF INDO PARA " << ifFoot - ifHead << endl; 
+		globalProgramIterator += ifFoot - ifHead; //Pula o corpo do if
+	}
 }
 
 // 0 = +, 1 = -, 2 = *, 3 = /
@@ -218,7 +224,7 @@ void doOperationWithExpression(int operationType){
 }
 
 
-#line 222 "dtl.tab.c" /* yacc.c:339  */
+#line 228 "dtl.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -290,14 +296,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 157 "dtl.y" /* yacc.c:355  */
+#line 163 "dtl.y" /* yacc.c:355  */
 
 	int ival;
 	float fval;
 	char *sval;
 	void *oval; //Object
 
-#line 301 "dtl.tab.c" /* yacc.c:355  */
+#line 307 "dtl.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -314,7 +320,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 318 "dtl.tab.c" /* yacc.c:358  */
+#line 324 "dtl.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -614,12 +620,12 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   202,   202,   207,   208,   209,   210,   211,   212,   213,
-     214,   215,   222,   231,   235,   246,   262,   280,   298,   323,
-     324,   328,   366,   404,   451,   470,   483,   513,   525,   531,
-     537,   543,   548,   553,   558,   563,   568,   573,   581,   584,
-     589,   635,   641,   647,   671,   681,   685,   691,   733,   751,
-     759,   765
+       0,   208,   208,   213,   214,   215,   216,   217,   218,   219,
+     220,   221,   228,   237,   241,   252,   268,   286,   304,   329,
+     330,   334,   372,   410,   457,   476,   489,   519,   531,   537,
+     543,   549,   554,   559,   564,   569,   574,   579,   587,   590,
+     595,   641,   647,   653,   677,   687,   691,   697,   739,   757,
+     767,   773
 };
 #endif
 
@@ -1472,16 +1478,16 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 202 "dtl.y" /* yacc.c:1646  */
+#line 208 "dtl.y" /* yacc.c:1646  */
     {
 		if(DEBUG_MODE)
 			cout << "FINISHED!" << endl;
 	}
-#line 1481 "dtl.tab.c" /* yacc.c:1646  */
+#line 1487 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 222 "dtl.y" /* yacc.c:1646  */
+#line 228 "dtl.y" /* yacc.c:1646  */
     {
 			basicObject basicObjectCreated;
 			basicObjectCreated.type = Integer;
@@ -1491,11 +1497,11 @@ yyreduce:
 			
 			(yyval.oval) = auxForObjectInitialization;
 		}
-#line 1495 "dtl.tab.c" /* yacc.c:1646  */
+#line 1501 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 235 "dtl.y" /* yacc.c:1646  */
+#line 241 "dtl.y" /* yacc.c:1646  */
     {
 		unordered_map<string, basicObject> *aux = (unordered_map<string, basicObject> *) (yyvsp[-1].oval);
 		(yyval.oval) = aux;
@@ -1503,11 +1509,11 @@ yyreduce:
 		//Limpa o objeto no final, porque o objeto criado já foi passado para ser assimilado
 		auxForObjectInitialization = new unordered_map<string, basicObject>();
 		}
-#line 1507 "dtl.tab.c" /* yacc.c:1646  */
+#line 1513 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 246 "dtl.y" /* yacc.c:1646  */
+#line 252 "dtl.y" /* yacc.c:1646  */
     {
 		basicObject auxObject;
 		auxObject.type = Integer;
@@ -1521,11 +1527,11 @@ yyreduce:
 				cout << "VARIABLE DECLARATION: " << varName << endl;	
 		});		
   }
-#line 1525 "dtl.tab.c" /* yacc.c:1646  */
+#line 1531 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 262 "dtl.y" /* yacc.c:1646  */
+#line 268 "dtl.y" /* yacc.c:1646  */
     {
 		string varName = (yyvsp[-3].sval);
 
@@ -1544,11 +1550,11 @@ yyreduce:
 		});				
 		
 	}
-#line 1548 "dtl.tab.c" /* yacc.c:1646  */
+#line 1554 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 280 "dtl.y" /* yacc.c:1646  */
+#line 286 "dtl.y" /* yacc.c:1646  */
     {
 		
 		basicObject auxObject;
@@ -1567,11 +1573,11 @@ yyreduce:
 			}	
 		});				
 	}
-#line 1571 "dtl.tab.c" /* yacc.c:1646  */
+#line 1577 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 298 "dtl.y" /* yacc.c:1646  */
+#line 304 "dtl.y" /* yacc.c:1646  */
     {
 		
 		basicObject auxObject;
@@ -1594,23 +1600,23 @@ yyreduce:
 			}
 		});
 	}
-#line 1598 "dtl.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 19:
-#line 323 "dtl.y" /* yacc.c:1646  */
-    { auxForCascadedObjects.push_back((yyvsp[-2].sval)); auxForCascadedObjects.push_back((yyvsp[0].sval));}
 #line 1604 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
-  case 20:
-#line 324 "dtl.y" /* yacc.c:1646  */
-    {auxForCascadedObjects.push_back((yyvsp[0].sval));}
+  case 19:
+#line 329 "dtl.y" /* yacc.c:1646  */
+    { auxForCascadedObjects.push_back((yyvsp[-2].sval)); auxForCascadedObjects.push_back((yyvsp[0].sval));}
 #line 1610 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
+  case 20:
+#line 330 "dtl.y" /* yacc.c:1646  */
+    {auxForCascadedObjects.push_back((yyvsp[0].sval));}
+#line 1616 "dtl.tab.c" /* yacc.c:1646  */
+    break;
+
   case 21:
-#line 328 "dtl.y" /* yacc.c:1646  */
+#line 334 "dtl.y" /* yacc.c:1646  */
     {
 		vector<string> localCascadedObjects = auxForCascadedObjects;
 
@@ -1649,11 +1655,11 @@ yyreduce:
 
 		auxForCascadedObjects.clear();		
 	}
-#line 1653 "dtl.tab.c" /* yacc.c:1646  */
+#line 1659 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 366 "dtl.y" /* yacc.c:1646  */
+#line 372 "dtl.y" /* yacc.c:1646  */
     {
 		
 		basicObject auxObject;
@@ -1692,11 +1698,11 @@ yyreduce:
 
 		auxForCascadedObjects.clear();
 	}
-#line 1696 "dtl.tab.c" /* yacc.c:1646  */
+#line 1702 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 404 "dtl.y" /* yacc.c:1646  */
+#line 410 "dtl.y" /* yacc.c:1646  */
     {
 		
 		basicObject auxObject;
@@ -1740,11 +1746,11 @@ yyreduce:
 
 		auxForCascadedObjects.clear();		
 	}
-#line 1744 "dtl.tab.c" /* yacc.c:1646  */
+#line 1750 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 451 "dtl.y" /* yacc.c:1646  */
+#line 457 "dtl.y" /* yacc.c:1646  */
     {
 		//$$ = $1;
 
@@ -1764,11 +1770,11 @@ yyreduce:
 			});
 			
 		}
-#line 1768 "dtl.tab.c" /* yacc.c:1646  */
+#line 1774 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 470 "dtl.y" /* yacc.c:1646  */
+#line 476 "dtl.y" /* yacc.c:1646  */
     {
 			string varName = (yyvsp[0].sval);
 
@@ -1782,11 +1788,11 @@ yyreduce:
 					globalExpressionStackDuplicate.push_back(varName);
 			});
 		}
-#line 1786 "dtl.tab.c" /* yacc.c:1646  */
+#line 1792 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 483 "dtl.y" /* yacc.c:1646  */
+#line 489 "dtl.y" /* yacc.c:1646  */
     {
 		vector<string> localCascadedObjects = auxForCascadedObjects;
 
@@ -1817,11 +1823,11 @@ yyreduce:
 			}
 		});
 	}
-#line 1821 "dtl.tab.c" /* yacc.c:1646  */
+#line 1827 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 513 "dtl.y" /* yacc.c:1646  */
+#line 519 "dtl.y" /* yacc.c:1646  */
     {
 				//$$ = $1 / $3;
 				
@@ -1834,122 +1840,122 @@ yyreduce:
 						doOperationWithExpression(3);
 					}); 
 			}
-#line 1838 "dtl.tab.c" /* yacc.c:1646  */
+#line 1844 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 525 "dtl.y" /* yacc.c:1646  */
+#line 531 "dtl.y" /* yacc.c:1646  */
     {
 			//$$ = $1 * $3;
 			runProgram.push_back([](){
 					doOperationWithExpression(2);
 			}); 
 		}
-#line 1849 "dtl.tab.c" /* yacc.c:1646  */
+#line 1855 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 531 "dtl.y" /* yacc.c:1646  */
+#line 537 "dtl.y" /* yacc.c:1646  */
     {
 			//$$ = $1 + $3;
 			runProgram.push_back([](){
 				doOperationWithExpression(0);
 			}); 	
 		}
-#line 1860 "dtl.tab.c" /* yacc.c:1646  */
+#line 1866 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 537 "dtl.y" /* yacc.c:1646  */
+#line 543 "dtl.y" /* yacc.c:1646  */
     {
 		//$$ = $1 - $3;
 		runProgram.push_back([](){
 				doOperationWithExpression(1);
 		}); 	
 	}
-#line 1871 "dtl.tab.c" /* yacc.c:1646  */
+#line 1877 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 543 "dtl.y" /* yacc.c:1646  */
+#line 549 "dtl.y" /* yacc.c:1646  */
     {
 		runProgram.push_back([](){
 				doOperationWithExpression(4);
 		}); 
 	}
-#line 1881 "dtl.tab.c" /* yacc.c:1646  */
+#line 1887 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 548 "dtl.y" /* yacc.c:1646  */
+#line 554 "dtl.y" /* yacc.c:1646  */
     {
 		runProgram.push_back([](){
 				doOperationWithExpression(5);
 		}); 
 	}
-#line 1891 "dtl.tab.c" /* yacc.c:1646  */
+#line 1897 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 553 "dtl.y" /* yacc.c:1646  */
+#line 559 "dtl.y" /* yacc.c:1646  */
     {
 		runProgram.push_back([](){
 				doOperationWithExpression(6);
 		}); 
 	}
-#line 1901 "dtl.tab.c" /* yacc.c:1646  */
+#line 1907 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 558 "dtl.y" /* yacc.c:1646  */
+#line 564 "dtl.y" /* yacc.c:1646  */
     {
 		runProgram.push_back([](){
 				doOperationWithExpression(7);
 		}); 
 	}
-#line 1911 "dtl.tab.c" /* yacc.c:1646  */
+#line 1917 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 563 "dtl.y" /* yacc.c:1646  */
+#line 569 "dtl.y" /* yacc.c:1646  */
     {
 		runProgram.push_back([](){
 				doOperationWithExpression(8);
 		}); 
 	}
-#line 1921 "dtl.tab.c" /* yacc.c:1646  */
+#line 1927 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 568 "dtl.y" /* yacc.c:1646  */
+#line 574 "dtl.y" /* yacc.c:1646  */
     {
 		runProgram.push_back([](){
 				doOperationWithExpression(9);
 		}); 
 	}
-#line 1931 "dtl.tab.c" /* yacc.c:1646  */
+#line 1937 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 573 "dtl.y" /* yacc.c:1646  */
+#line 579 "dtl.y" /* yacc.c:1646  */
     {
 		// Tá certo, tem que parsear os internos primeiros
 		// então fica essa declaração para dar prioridade na hora de jogar
 		// nas respectivas stacks
 	}
-#line 1941 "dtl.tab.c" /* yacc.c:1646  */
+#line 1947 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 584 "dtl.y" /* yacc.c:1646  */
+#line 590 "dtl.y" /* yacc.c:1646  */
     { //Reconhece esse padrão quando começa o if
 		ifHeadStack.push_back(runProgram.size());
 	}
-#line 1949 "dtl.tab.c" /* yacc.c:1646  */
+#line 1955 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 589 "dtl.y" /* yacc.c:1646  */
+#line 595 "dtl.y" /* yacc.c:1646  */
     { 
 		//Reconhece esse padrão quando acaba o if
 		ifFootStack.push_back(runProgram.size()); 
@@ -1992,33 +1998,33 @@ yyreduce:
 		});	
 
 	}
-#line 1996 "dtl.tab.c" /* yacc.c:1646  */
+#line 2002 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 635 "dtl.y" /* yacc.c:1646  */
+#line 641 "dtl.y" /* yacc.c:1646  */
     {
 		string varName = (yyvsp[0].sval);
 		runProgram.push_back([varName]() {
 			cout << varName << " = ";
 			decast(cast(GLOBAL)[varName]);
 		});}
-#line 2007 "dtl.tab.c" /* yacc.c:1646  */
+#line 2013 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 641 "dtl.y" /* yacc.c:1646  */
+#line 647 "dtl.y" /* yacc.c:1646  */
     {
 		string textToPrint = (yyvsp[0].sval);
 		runProgram.push_back([textToPrint]() {
 			//retirando as aspas
 			cout << textToPrint.substr(1, textToPrint.length() - 2) << endl;
 		});}
-#line 2018 "dtl.tab.c" /* yacc.c:1646  */
+#line 2024 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 647 "dtl.y" /* yacc.c:1646  */
+#line 653 "dtl.y" /* yacc.c:1646  */
     {
 			vector<string> localCascadedObjects = auxForCascadedObjects;
 
@@ -2043,31 +2049,31 @@ yyreduce:
 				decast(cast(auxDereference)[stringForPrintingLater]);
 			});
 		}
-#line 2047 "dtl.tab.c" /* yacc.c:1646  */
+#line 2053 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 671 "dtl.y" /* yacc.c:1646  */
+#line 677 "dtl.y" /* yacc.c:1646  */
     {
 		string varName = (yyvsp[0].sval);
 		runProgram.push_back([varName]() {
 			cout << varName << " = ";
 			decast(cast(GLOBAL)[varName]);
 		});}
-#line 2058 "dtl.tab.c" /* yacc.c:1646  */
+#line 2064 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 685 "dtl.y" /* yacc.c:1646  */
+#line 691 "dtl.y" /* yacc.c:1646  */
     { //Reconhece esse padrão quando começa a declaração de função
 		functionMap[(yyvsp[0].sval)] = runProgram.size();
 		functionHeadStack.push_back(runProgram.size());		
 	}
-#line 2067 "dtl.tab.c" /* yacc.c:1646  */
+#line 2073 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 691 "dtl.y" /* yacc.c:1646  */
+#line 697 "dtl.y" /* yacc.c:1646  */
     { 
 		//Reconhece esse padrão quando acaba a declaração de função
 		functionFootStack.push_back(runProgram.size()); 
@@ -2108,11 +2114,11 @@ yyreduce:
 			functionReturnStack.pop_back();
 		});
 	}
-#line 2112 "dtl.tab.c" /* yacc.c:1646  */
+#line 2118 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 733 "dtl.y" /* yacc.c:1646  */
+#line 739 "dtl.y" /* yacc.c:1646  */
     {
 		string functionName = (yyvsp[-3].sval);
 
@@ -2128,31 +2134,33 @@ yyreduce:
 			globalProgramIterator = runProgram.begin() + functionMap[functionName];
 		});
 	}
-#line 2132 "dtl.tab.c" /* yacc.c:1646  */
+#line 2138 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 751 "dtl.y" /* yacc.c:1646  */
+#line 757 "dtl.y" /* yacc.c:1646  */
     {
 		if(DEBUG_MODE)
 			cout << "ATOMIC WHILE FOUND: " << runProgram.size() << endl; 
 		shouldDuplicateExpresssionStack = true;
+
+		runProgram.push_back([]() {});
 		whileHeadStack.push_back(runProgram.size());
 	}
-#line 2143 "dtl.tab.c" /* yacc.c:1646  */
+#line 2151 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 759 "dtl.y" /* yacc.c:1646  */
+#line 767 "dtl.y" /* yacc.c:1646  */
     { //Reconhece esse padrão quando começa o if
 		whileBodyStack.push_back(runProgram.size());
 		shouldDuplicateExpresssionStack = false;
 	}
-#line 2152 "dtl.tab.c" /* yacc.c:1646  */
+#line 2160 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 765 "dtl.y" /* yacc.c:1646  */
+#line 773 "dtl.y" /* yacc.c:1646  */
     { 
 		//Reconhece esse padrão quando acaba o if
 		whileFootStack.push_back(runProgram.size()); 
@@ -2193,16 +2201,16 @@ yyreduce:
 
 		runProgram.push_back([whileHead]() { 
 			if(DEBUG_MODE)
-				cout << " GO TO HEAD OF WHILE " << endl;			
+				cout << " GO TO HEAD OF WHILE " << whileHead - 1 << endl;			
 
 			globalProgramIterator = runProgram.begin() + whileHead - 1;
 		});
 	}
-#line 2202 "dtl.tab.c" /* yacc.c:1646  */
+#line 2210 "dtl.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2206 "dtl.tab.c" /* yacc.c:1646  */
+#line 2214 "dtl.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2430,7 +2438,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 812 "dtl.y" /* yacc.c:1906  */
+#line 820 "dtl.y" /* yacc.c:1906  */
 
 
 int main(int, char *argv[]) {
