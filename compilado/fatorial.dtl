@@ -1,0 +1,32 @@
+fun fatorialRecur {
+  if(count1 > 1){
+    x = x * count1;
+    count1 = count1 - 1;
+
+    fatorialRecur();
+  }
+}
+
+fun fatorialIter {
+  var count2;
+  count2 = y - 1;
+
+  while(count2 > 1){
+    y = y * count2;
+    count2 = count2 - 1;
+  }
+}
+
+var x;
+var y;
+var count1;
+
+x = 5;
+y = 3;
+count1 = x - 1;
+
+fatorialRecur();
+print("Recursivo:", x);
+
+fatorialIter();
+print("Iterativo:", y);
