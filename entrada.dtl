@@ -2,7 +2,16 @@ var x;
 
 x = 1;
 
+var y;
+y = {var a, var b};
+y.b = 7;
+
+x = 2;
+
+x = y.b;
+print(x);
+
 while(x != 4){
-  x = x + 1;
+  x = 4;
   print("AOAOAOAO");
 }

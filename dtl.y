@@ -8,7 +8,7 @@
 #include <functional>
 #include <stdlib.h> //Exit
 #define cast(X) (*any_cast<unordered_map<string, basicObject>*>(X.obj))
-#define DEBUG_MODE false
+#define DEBUG_MODE true
 
 using namespace std;
 
@@ -481,16 +481,34 @@ express:
 			});
 		}
 	| cascadedRef {
+		vector<string> localCascadedObjects = auxForCascadedObjects;
+
+		runProgram.push_back([localCascadedObjects]() { 			
+			string stringForPrintingLater;
 			basicObject auxDereference = GLOBAL;
-			for(auto x : auxForCascadedObjects){
-				if(x == auxForCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
-					$$ = any_cast<int> ((cast(auxDereference)[x]).obj);				
+			for(auto x : localCascadedObjects){
+				if(x == localCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
+					globalExpressionStack.push_back(cast(auxDereference)[x].obj);
+					
+					stringForPrintingLater = x;				
 				} else { //Se não vai descendo recursivamente
 					auxDereference = cast(auxDereference)[x];
 				}
-		}
+			}
 
-		auxForCascadedObjects.clear();
+			if(DEBUG_MODE){
+				cout << "VARIABLE ATTRIBUTION: (INTEGER) ";
+				
+				for(auto x : localCascadedObjects) 
+					if(x == localCascadedObjects.front())
+						cout << x;
+					else cout << "." << x;
+
+				cout << " = ";
+
+				decast(cast(auxDereference)[stringForPrintingLater]);
+			}
+		});
 	}
   | express DIV express {
 				//$$ = $1 / $3;
