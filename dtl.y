@@ -8,7 +8,7 @@
 #include <functional>
 #include <stdlib.h> //Exit
 #define cast(X) (*any_cast<unordered_map<string, basicObject>*>(X.obj))
-#define DEBUG_MODE true
+#define DEBUG_MODE false
 
 using namespace std;
 
@@ -88,14 +88,15 @@ void checkIf(int ifHead, int ifFoot, int condition){
 
 // 0 = +, 1 = -, 2 = *, 3 = /
 // 4 = >, 5 = <, 6 = >=, 7 = <=
-// 8 = ==, 9 = !=
+// 8 = ==, 9 = !=, 10 = &&, 11 = ||
 void doOperationWithExpression(int operationType){
 	any secondExpress = globalExpressionStack.back();
 	globalExpressionStack.pop_back();
 	any firstExpress = globalExpressionStack.back();
 	globalExpressionStack.pop_back();
 
-	if(anyTypeString.compare(firstExpress.type().name()) == 0){
+	//Não precisa mais, o decast acontece no push pra stack
+	/* if(anyTypeString.compare(firstExpress.type().name()) == 0){
 		if(DEBUG_MODE){
 			cout << "Variable in Expression (1): " << any_cast<string>(firstExpress) << endl;
 			cout <<  any_cast<int> ((cast(GLOBAL)[any_cast<string>(firstExpress)]).obj) << endl;
@@ -111,7 +112,7 @@ void doOperationWithExpression(int operationType){
 		}
 
 		secondExpress = ((cast(GLOBAL)[any_cast<string>(secondExpress)]).obj);
-	}
+	} */
 
 	int result;
 
@@ -155,6 +156,14 @@ void doOperationWithExpression(int operationType){
 		case 9:
 			result = any_cast<int>(firstExpress) != any_cast<int>(secondExpress);
 			break;
+
+		case 10:
+			result = any_cast<int>(firstExpress) && any_cast<int>(secondExpress);
+			break;
+
+		case 11:
+			result = any_cast<int>(firstExpress) || any_cast<int>(secondExpress);
+			break;
 	}
 	
 	globalExpressionStack.push_back(result);
@@ -191,7 +200,7 @@ void doOperationWithExpression(int operationType){
 %token ENDL
 %token DECLARATION QMARKS ATTRIBUTION DOT
 %token OPEN_CBRACKETS CLOSE_CBRACKETS COMMA OPEN_PAREN CLOSE_PAREN
-%token GREATER LESSER EQUALS N_EQUALS GR_EQUAL LE_EQUAL
+%token GREATER LESSER EQUALS N_EQUALS GR_EQUAL LE_EQUAL AND OR
 %token IF_S ELSE_S WHILE_S FUNC
 %token PRINT SCAN
 
@@ -200,7 +209,7 @@ void doOperationWithExpression(int operationType){
 %left SUM MINUS
 %left MUL DIV
 %left COMMA
-%left GREATER LESSER EQUALS N_EQUALS GR_EQUAL LE_EQUAL
+%left AND OR GREATER LESSER EQUALS N_EQUALS GR_EQUAL LE_EQUAL 
 
 %%
 // This is the actual grammar that bison will parse, but for right now it's just
@@ -489,7 +498,7 @@ express:
 				if(DEBUG_MODE)
 					cout << "Var pushed to expression stack " << globalExpressionStack.size() << endl;
 
-				globalExpressionStack.push_back(varName);
+				globalExpressionStack.push_back(((cast(GLOBAL)[varName]).obj));
 
 				if(shouldDuplicateExpresssionStack)
 					globalExpressionStackDuplicate.push_back(varName);
@@ -585,6 +594,16 @@ express:
 	| express N_EQUALS express {
 		runProgram.push_back([](){
 				doOperationWithExpression(9);
+		}); 
+	}
+	| express AND express {
+		runProgram.push_back([](){
+				doOperationWithExpression(10);
+		}); 
+	}
+	| express OR express {
+		runProgram.push_back([](){
+				doOperationWithExpression(11);
 		}); 
 	}
 	| OPEN_PAREN express CLOSE_PAREN {

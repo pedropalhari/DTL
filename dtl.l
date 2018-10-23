@@ -30,6 +30,8 @@ using namespace std;
 "<=" {return LE_EQUAL;}
 "==" {return EQUALS;}
 "!=" {return N_EQUALS;}
+"&&" {return AND;}
+"||" {return OR;}
 "if" {return IF_S;}
 "while" {return WHILE_S;}
 "else" {return ELSE_S;}
