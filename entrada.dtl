@@ -12,6 +12,9 @@ fun facX {
 var x;
 x = 3;
 
+print("Entre com o x:");
+scan(x);
+
 facX();
 
 print(x);
@@ -19,5 +22,15 @@ print(x);
 while(x < 8){
   x = x + 1;
 }
+
+var y;
+y = {var a, var b};
+
+y.a = 10;
+y.b = 20;
+
+var z;
+z = y.a + y.b;
+print(z);
 
 print("UDSDUASHDUIA");

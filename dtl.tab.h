@@ -70,10 +70,11 @@ extern int yydebug;
     WHILE_S = 280,
     FUNC = 281,
     PRINT = 282,
-    SUM = 283,
-    MINUS = 284,
-    MUL = 285,
-    DIV = 286
+    SCAN = 283,
+    SUM = 284,
+    MINUS = 285,
+    MUL = 286,
+    DIV = 287
   };
 #endif
 
@@ -82,14 +83,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 163 "dtl.y" /* yacc.c:1909  */
+#line 165 "dtl.y" /* yacc.c:1909  */
 
 	int ival;
 	float fval;
 	char *sval;
 	void *oval; //Object
 
-#line 93 "dtl.tab.h" /* yacc.c:1909  */
+#line 94 "dtl.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

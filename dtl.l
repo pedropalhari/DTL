@@ -34,6 +34,7 @@ using namespace std;
 "while" {return WHILE_S;}
 "else" {return ELSE_S;}
 "print" {return PRINT;}
+"scan" {return SCAN;}
 "fun" {return FUNC;}
 [ \t\n]           ;
 [0-9]+\.[0-9]+    { yylval.fval = atof(yytext); return FLOAT; }

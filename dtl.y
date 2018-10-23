@@ -75,11 +75,13 @@ void checkIf(int ifHead, int ifFoot, int condition){
 	}
 
 	if(condition){
-		cout << "IF INDO PARA A PROX INSTRUÇÃO" << endl;
+		if(DEBUG_MODE)
+			cout << "IF INDO PARA A PROX INSTRUÇÃO" << endl;
 		return;
 	}
 	else {
-		cout << "IF INDO PARA " << ifFoot - ifHead << endl; 
+		if(DEBUG_MODE)
+			cout << "IF INDO PARA " << ifFoot - ifHead << endl; 
 		globalProgramIterator += ifFoot - ifHead; //Pula o corpo do if
 	}
 }
@@ -191,7 +193,8 @@ void doOperationWithExpression(int operationType){
 %token OPEN_CBRACKETS CLOSE_CBRACKETS COMMA OPEN_PAREN CLOSE_PAREN
 %token GREATER LESSER EQUALS N_EQUALS GR_EQUAL LE_EQUAL
 %token IF_S ELSE_S WHILE_S FUNC
-%token PRINT
+%token PRINT SCAN
+
 
 %token SUM MINUS MUL DIV
 %left SUM MINUS
@@ -216,6 +219,7 @@ body:
 	| varAttributionCascaded body
 	| ifelse body
 	| print body
+	| scan body
 	| function body
 	| funCall body
 	| while body
@@ -326,8 +330,13 @@ varAttribution:
 	;
 
 cascadedRef:
-	STRING DOT STRING { auxForCascadedObjects.push_back($1); auxForCascadedObjects.push_back($3);}
-	| cascadedRef DOT STRING {auxForCascadedObjects.push_back($3);}
+	STRING DOT STRING { 
+		auxForCascadedObjects.push_back($1);
+		auxForCascadedObjects.push_back($3);
+	}
+	| cascadedRef DOT STRING {
+		auxForCascadedObjects.push_back($3);
+	}
 	;
 
 varAttributionCascaded:
@@ -515,6 +524,8 @@ express:
 				decast(cast(auxDereference)[stringForPrintingLater]);
 			}
 		});
+
+		auxForCascadedObjects.clear();
 	}
   | express DIV express {
 				//$$ = $1 / $3;
@@ -685,6 +696,65 @@ printVar:
 
 print:
 	PRINT OPEN_PAREN printVar CLOSE_PAREN ENDL
+	;
+
+scan:
+	SCAN OPEN_PAREN STRING CLOSE_PAREN ENDL {
+		string varName = $3;
+
+		runProgram.push_back([varName]() { 
+			int intFromCin = 0;
+			basicObject auxObject;
+			auxObject.type = Integer;
+			cin >> intFromCin;
+			auxObject.obj = intFromCin;
+
+			attr(cast(GLOBAL)[varName], auxObject); 
+
+			if(DEBUG_MODE){
+				cout << "VARIABLE SCAN: (INTEGER) " << varName << " = ";
+				decast(cast(GLOBAL)[varName]);	 	
+			}
+		});		
+	}
+	| SCAN OPEN_PAREN cascadedRef CLOSE_PAREN ENDL {
+		vector<string> localCascadedObjects = auxForCascadedObjects;
+
+		runProgram.push_back([localCascadedObjects]() {
+			int intFromCin; 			
+			basicObject auxObject;
+			auxObject.type = Integer;
+			cin >> intFromCin;
+			auxObject.obj = intFromCin;
+
+			string stringForPrintingLater;
+			basicObject auxDereference = GLOBAL;
+			for(auto x : localCascadedObjects){
+				if(x == localCascadedObjects.back()){ //Se for o ultimo elemento rola a atribuição nele
+					attr(cast(auxDereference)[x], auxObject); 
+					
+					stringForPrintingLater = x;				
+				} else { //Se não vai descendo recursivamente
+					auxDereference = cast(auxDereference)[x];
+				}
+			}
+
+			if(DEBUG_MODE){
+				cout << "VARIABLE ATTRIBUTION: (INTEGER) ";
+				
+				for(auto x : localCascadedObjects) 
+					if(x == localCascadedObjects.front())
+						cout << x;
+					else cout << "." << x;
+
+				cout << " = ";
+
+				decast(cast(auxDereference)[stringForPrintingLater]);
+			}
+		});
+
+		auxForCascadedObjects.clear();
+	}
 	;
 
 functionHead:
