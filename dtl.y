@@ -9,6 +9,7 @@
 #include <stdlib.h> //Exit
 #define cast(X) (*any_cast<unordered_map<string, basicObject>*>(X.obj))
 #define DEBUG_MODE false
+#define DEBUG_FIND_TOKEN true
 
 using namespace std;
 
@@ -218,7 +219,7 @@ void doOperationWithExpression(int operationType){
 
 wholeProgram:
 	body {
-		if(DEBUG_MODE)
+		if(DEBUG_FIND_TOKEN)
 			cout << "FINISHED!" << endl;
 	};
 
@@ -239,6 +240,9 @@ body:
 //E DEPOIS "RETORNO" ELE PRA ATRIBUIÇÃO DO OBJETO LÁ EM x = {}
 objectDeclarationBody:
 	DECLARATION STRING {
+			if(DEBUG_FIND_TOKEN)
+				cout << "OBJECT DECLARATION FOUND" << endl;
+
 			basicObject basicObjectCreated;
 			basicObjectCreated.type = Integer;
 			basicObjectCreated.obj = 0;
@@ -252,6 +256,9 @@ objectDeclarationBody:
 
 object:
 	OPEN_CBRACKETS objectDeclarationBody CLOSE_CBRACKETS {
+		if(DEBUG_FIND_TOKEN)
+			cout << "OBJECT FOUND" << endl;
+
 		unordered_map<string, basicObject> *aux = (unordered_map<string, basicObject> *) $2;
 		$$ = aux;
 
@@ -271,7 +278,7 @@ varDeclaration:
 		runProgram.push_back([auxObject, varName]() { 
 			attr(cast(GLOBAL)[varName], auxObject); 
 
-			if(DEBUG_MODE)
+			if(DEBUG_FIND_TOKEN)
 				cout << "VARIABLE DECLARATION: " << varName << endl;	
 		});		
   }
@@ -289,7 +296,7 @@ varAttribution:
 
 			attr(cast(GLOBAL)[varName], auxObject); 
 
-			if(DEBUG_MODE){
+			if(DEBUG_FIND_TOKEN){
 				cout << "VARIABLE ATTRIBUTION: (INTEGER) " << varName << " = ";
 				decast(cast(GLOBAL)[varName]);	 	
 			}
@@ -308,7 +315,7 @@ varAttribution:
 		runProgram.push_back([auxObject, varName]() { 
 			attr(cast(GLOBAL)[varName], auxObject); 
 
-			if(DEBUG_MODE){
+			if(DEBUG_FIND_TOKEN){
 				cout << "VARIABLE ATTRIBUTION: (STRING) " << varName << " = ";
 				decast(cast(GLOBAL)[varName]);	 
 			}	
@@ -325,7 +332,7 @@ varAttribution:
 		runProgram.push_back([auxObject, varName]() { 
 			attr(cast(GLOBAL)[varName], auxObject); 
 
-			if(DEBUG_MODE){
+			if(DEBUG_FIND_TOKEN){
 				cout << "VARIABLE ATTRIBUTION: (OBJECT) " << varName << " = {" << endl;
 
 				for(auto x : cast(cast(GLOBAL)[varName])){
@@ -371,7 +378,7 @@ varAttributionCascaded:
 				}
 			}
 
-			if(DEBUG_MODE){
+			if(DEBUG_FIND_TOKEN){
 				cout << "VARIABLE ATTRIBUTION: (INTEGER) ";
 				
 				for(auto x : localCascadedObjects) 
@@ -409,7 +416,7 @@ varAttributionCascaded:
 				}
 			}
 
-			if(DEBUG_MODE){
+			if(DEBUG_FIND_TOKEN){
 				cout << "VARIABLE ATTRIBUTION: (STRING) ";
 				
 				for(auto x : localCascadedObjects) 
@@ -446,7 +453,7 @@ varAttributionCascaded:
 				}
 			}
 
-			if(DEBUG_MODE){
+			if(DEBUG_FIND_TOKEN){
 				cout << "VARIABLE ATTRIBUTION: (OBJECT) ";
 				
 				for(auto x : localCascadedObjects) 
@@ -477,6 +484,9 @@ express:
 
 			int numberFound = $1;
 			
+			if(DEBUG_FIND_TOKEN)
+				cout << "FOUND INT: " << numberFound << endl;
+
 			if(DEBUG_MODE)
 				cout << "Program counter position: " << runProgram.size() << endl;
 
@@ -493,6 +503,9 @@ express:
 		} 
 	| STRING {
 			string varName = $1;
+
+			if(DEBUG_FIND_TOKEN)
+				cout << "FOUND VAR: " << varName << endl;
 
 			runProgram.push_back([varName]() {
 				if(DEBUG_MODE)
@@ -520,7 +533,7 @@ express:
 				}
 			}
 
-			if(DEBUG_MODE){
+			if(DEBUG_FIND_TOKEN){
 				cout << "VARIABLE ATTRIBUTION: (INTEGER) ";
 				
 				for(auto x : localCascadedObjects) 
@@ -538,6 +551,9 @@ express:
 	}
   | express DIV express {
 				//$$ = $1 / $3;
+
+				if(DEBUG_FIND_TOKEN)
+					cout << "FOUND DIV" << endl;
 				
 				runProgram.push_back([](){
 					doOperationWithExpression(3);
@@ -550,58 +566,91 @@ express:
 			}
   | express MUL express {
 			//$$ = $1 * $3;
+			if(DEBUG_FIND_TOKEN)
+				cout << "FOUND MUL" << endl;
+
 			runProgram.push_back([](){
 					doOperationWithExpression(2);
 			}); 
 		}
   | express SUM express {
 			//$$ = $1 + $3;
+			if(DEBUG_FIND_TOKEN)
+				cout << "FOUND SUM" << endl;
+
 			runProgram.push_back([](){
 				doOperationWithExpression(0);
 			}); 	
 		}
   | express MINUS express {
 		//$$ = $1 - $3;
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND MINUS" << endl;
+
 		runProgram.push_back([](){
 				doOperationWithExpression(1);
 		}); 	
 	}
 	| express GREATER express {
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND GREATER" << endl;
+
 		runProgram.push_back([](){
 				doOperationWithExpression(4);
 		}); 
 	}
 	| express LESSER express {
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND LESSER" << endl;
+
 		runProgram.push_back([](){
 				doOperationWithExpression(5);
 		}); 
 	}
 	| express GR_EQUAL express {
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND GREATER OR EQUAL" << endl;
+
 		runProgram.push_back([](){
 				doOperationWithExpression(6);
 		}); 
 	}
 	| express LE_EQUAL express {
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND LESS OR EQUAL" << endl;
+
 		runProgram.push_back([](){
 				doOperationWithExpression(7);
 		}); 
 	}
 	| express EQUALS express {
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND EQUALS" << endl;
+
 		runProgram.push_back([](){
 				doOperationWithExpression(8);
 		}); 
 	}
 	| express N_EQUALS express {
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND NOT EQUALS" << endl;
+
 		runProgram.push_back([](){
 				doOperationWithExpression(9);
 		}); 
 	}
 	| express AND express {
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND AND" << endl;
+
 		runProgram.push_back([](){
 				doOperationWithExpression(10);
 		}); 
 	}
 	| express OR express {
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND OR" << endl;
+
 		runProgram.push_back([](){
 				doOperationWithExpression(11);
 		}); 
@@ -610,11 +659,17 @@ express:
 		// Tá certo, tem que parsear os internos primeiros
 		// então fica essa declaração para dar prioridade na hora de jogar
 		// nas respectivas stacks
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND PARENTHESIS EXPRESSION" << endl;
 	}
   ;  
 
 codeblock:
-	 OPEN_CBRACKETS body CLOSE_CBRACKETS;
+	 OPEN_CBRACKETS body CLOSE_CBRACKETS {
+		 if(DEBUG_FIND_TOKEN)
+				cout << "FOUND CODE BLOCK" << endl;
+	 }
+	 ;
 
 ifhead:
 	IF_S OPEN_PAREN express CLOSE_PAREN { //Reconhece esse padrão quando começa o if
@@ -624,7 +679,10 @@ ifhead:
 ifelse:
 	ifhead codeblock { 
 		//Reconhece esse padrão quando acaba o if
-		ifFootStack.push_back(runProgram.size()); 
+		ifFootStack.push_back(runProgram.size());
+
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND IF" << endl; 
 
 		if(DEBUG_MODE){
 			cout << "IF HEAD STACK: ";
@@ -714,11 +772,17 @@ printVar:
 	;
 
 print:
-	PRINT OPEN_PAREN printVar CLOSE_PAREN ENDL
+	PRINT OPEN_PAREN printVar CLOSE_PAREN ENDL {
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND PRINT" << endl;
+	}
 	;
 
 scan:
 	SCAN OPEN_PAREN STRING CLOSE_PAREN ENDL {
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND SCAN" << endl;
+
 		string varName = $3;
 
 		runProgram.push_back([varName]() { 
@@ -737,6 +801,9 @@ scan:
 		});		
 	}
 	| SCAN OPEN_PAREN cascadedRef CLOSE_PAREN ENDL {
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND SCAN" << endl;
+
 		vector<string> localCascadedObjects = auxForCascadedObjects;
 
 		runProgram.push_back([localCascadedObjects]() {
@@ -787,6 +854,9 @@ function:
 		//Reconhece esse padrão quando acaba a declaração de função
 		functionFootStack.push_back(runProgram.size()); 
 
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND FUNCTION" << endl;
+
 		if(DEBUG_MODE){
 			cout << "FUNCTION HEAD STACK: ";
 			for(auto x : functionHeadStack)
@@ -826,6 +896,9 @@ function:
 
 funCall:
 	STRING OPEN_PAREN CLOSE_PAREN ENDL{
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND FUNCTION CALL" << endl;
+
 		string functionName = $1;
 
 		runProgram.push_back([functionName]() { 
@@ -862,6 +935,9 @@ while:
 	whileHead codeblock { 
 		//Reconhece esse padrão quando acaba o if
 		whileFootStack.push_back(runProgram.size()); 
+
+		if(DEBUG_FIND_TOKEN)
+				cout << "FOUND WHILE" << endl;
 
 		if(DEBUG_MODE){
 			cout << "WHILE HEAD STACK: ";
