@@ -21,4 +21,15 @@ typedef struct {
 
 * As funções lambda são _pushed_ em um array e em tempo de execução esse array é caminhado com um interator. Esse array faz somas, subtrações, comparações, pulos e avanços (estruturas de controle).
 
+## Instruções de controle
+
+* As instruções de controle tem pilhas de cabeça e pé. Por exemplo:
+* * Ifs tem cabeça e pé, se a condição é respeitada executa a instrução seguida da cabeça, se não, pula para a instrução seguinte ao pé.
+
+* * Whiles tem a cabeça antes da condição, e uma instrução inserida antes do pé que faz retornar a cabeça. Se a condição é respeitada executa o corpo do while, se não pula o corpo inteiro (inclusive a que faz retornar a cabeça).
+
+* * Funções tem uma instrução em sua cabeça que faz pular o corpo inteiro em sua declaração e uma instrução antes do seu pé que faz retornar aonde elas foram chamadas. Assim as instruções na hora da declaração não são executadas, e a chamada de função '()' coloca o iterator que executa as instruções dentro do corpo da função.
+
+Para detectar cabeças/pés e lógicas de controle são usados diversos métodos em conjunto com o parser (Ex: whileAtomic ('while') -> whileHead (whileAtomic '(' express ')' ) -> whileBody (whileHead body)).
+
   
