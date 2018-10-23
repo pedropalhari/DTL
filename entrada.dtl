@@ -33,4 +33,7 @@ var z;
 z = y.a + y.b;
 print(z);
 
+scan(y.a);
+print(y.a);
+
 print("UDSDUASHDUIA");
