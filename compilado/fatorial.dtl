@@ -19,14 +19,16 @@ fun fatorialIter {
 
 var x;
 var y;
-var count1;
 
-x = 5;
-y = 3;
+print("Entre com o x para o fatorial Recursivo:");
+scan(x);
 count1 = x - 1;
 
 fatorialRecur();
 print("Recursivo:", x);
+
+print("Entre com o y para o fatorial Iterativo:");
+scan(y);
 
 fatorialIter();
 print("Iterativo:", y);
