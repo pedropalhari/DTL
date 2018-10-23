@@ -32,4 +32,14 @@ typedef struct {
 
 Para detectar cabeças/pés e lógicas de controle são usados diversos métodos em conjunto com o parser (Ex: whileAtomic ('while') -> whileHead (whileAtomic '(' express ')' ) -> whileBody (whileHead body)).
 
+## Expressões
+
+* Expressões tem de ser obviamente resolvidas em tempo de execução pois podem considerar variáveis, então são colocadas também no array de execução.
+
+* Expressões utilizam uma stack para serem resolvidas.
+
+* Caso a stack possua string é uma variável e tem de pegar o valor dela antes de continuar a execução da expressão.
+
+* Expressões são todas as aritméticas e lógicas.
+
   
